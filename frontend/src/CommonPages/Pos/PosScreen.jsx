@@ -3,7 +3,7 @@
 import React from 'react'
 
 import { Link } from 'react-router-dom'
-import { Avatar2, Avatar3, Avatar4, Avatar5, Avatar6, Avatar7, Avatar8, blogimg1, blogimg2, incomingcall, outgoing, plusicon, refreshicon, searchnormal } from '../../componentsd/imagepath'
+import { Avatar2, Avatar3, Avatar4, Avatar5, Avatar6, Avatar7, Avatar8, blogimg1, blogimg2, incomingcall, outgoing, plusicon, refreshicon, searchnormal } from '../imagepath'
 import FeatherIcon from 'feather-icons-react/build/FeatherIcon'
 import Header from '../Header'
 import Sidebar from '../Sidebar'

@@ -2,12 +2,8 @@ import React from "react";
 // eslint-disable-next-line no-unused-vars
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./componentsd/pages/login";
-import CreateDrugLot from "./componentsd/CreateDrugLot/CreateDrugLot";
-import CreateInvoice from "./componentsd/PurchaseRequests/CreateInvoice";
-import PPInvoiceList from "./componentsd/PurchaseRequests/InvoiceList";
+import Login from "./CommonPages/login";
 import AddNewDrug from "./CommonPages/DrugInventory/AddNewDrug";
-import DrugInventory from "./CommonPages/DrugInventory/DrugInventory";
 import PosScreen from "./CommonPages/Pos/PosScreen";
 import AddManufacturer from "./CommonPages/ConnectedParties/AddManufacturer";
 import AddImporters from "./CommonPages/ConnectedParties/AddImporters";
@@ -35,10 +31,6 @@ const Approuter = () => {
 
           
           
-          <Route path="/add-invoice" element={<CreateInvoice />} />
-          <Route path="/invoice-list" element={<PPInvoiceList />} />
-          <Route path="/create-new-drug" element={<CreateDrugLot />} />
-          <Route path="/drug-inventory" element={<DrugInventory />} />
           <Route path="/pos" element={<PosScreen />} />
         </Routes>
       </BrowserRouter>
