@@ -44,6 +44,7 @@ const AddNewDrug = () => {
 
   const [newDosage, setNewDosage] = useState({ value: '', unit: 'ml' });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -96,6 +97,7 @@ const AddNewDrug = () => {
     }
 
     try {
+      setLoading(true);
       const response = await postData('/drugs', formData);
       console.log(response);
       alert('Drug definition submitted successfully!');
@@ -127,6 +129,8 @@ const AddNewDrug = () => {
     } catch (error) {
       alert('Failed to submit drug definition. Please try again.');
       console.error('API error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -444,9 +448,12 @@ const AddNewDrug = () => {
                 </div>
 
                 <div className="col-12 text-end">
-                  <button type="submit" className="btn btn-primary">Add Drug</button>
+                  <button type="submit" className="btn btn-primary" style={{minWidth: '120px'}} disabled={loading}>
+                    {loading ? (
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    ) : 'Add Drug'}
+                  </button>
                 </div>
-
               </div>
             </div>
           </form>

@@ -17,6 +17,9 @@ import '../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import '../node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle.js';
+import 'primereact/resources/themes/lara-light-blue/theme.css'; // or another theme
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 
 
