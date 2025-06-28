@@ -118,18 +118,22 @@ const Sidebar = (props) => {
                   </Link>
                   <ul style={{ display: sidebar === 'Orders' ? 'block' : 'none' }} className="menu-Creates">
                     <li>
-                      <Link className={props?.activeClassName === 'create-manufacturer' ? 'active' : ''} to="/create-manufacturer">
-                        Add Manufacturer</Link>
+                      <Link className={props?.activeClassName === 'create-manufacturer' ? 'active' : ''} to="/create/manufacturer">
+                        Create Manufacturer</Link>
                     </li>
 
                     <li>
-                      <Link className={props?.activeClassName === 'create-importers' ? 'active' : ''} to="/create-importers">
-                        Manufacturer List</Link>
+                      <Link className={props?.activeClassName === 'create-importers' ? 'active' : ''} to="/create/importers">
+                        Create Importers</Link>
                     </li>
 
                     <li>
-                      <Link className={props?.activeClassName === 'create-importers' ? 'active' : ''} to="/create-importers">
-                        Add Importer</Link>
+                      <Link className={props?.activeClassName === 'create-importers' ? 'active' : ''} to="/create/distributor">
+                        Create Distributors</Link>
+                    </li>
+                    <li>
+                      <Link className={props?.activeClassName === 'create-importers' ? 'active' : ''} to="/create/pharmacy">
+                        Create Pharmacies</Link>
                     </li>
                     <li>
                       <Link className={props?.activeClassName === 'order-list' ? 'active' : ''} to="/order-list">

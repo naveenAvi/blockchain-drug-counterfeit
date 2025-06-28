@@ -9,7 +9,7 @@ import AddImporters from "./CommonPages/ConnectedParties/AddImporters";
 import CreateOrder from "./CommonPages/Transactions/CreateOrder";
 import OrderList from "./CommonPages/Approvals/OrderList";
 import OrderInvoice from "./CommonPages/Approvals/OrderInvoice";
-import AddEntity from "./CommonPages/ConnectedParties/AddManufacturer";
+import AddEntity from "./CommonPages/ConnectedParties/AddEntity";
 
 //Accounts
 const Approuter = () => {

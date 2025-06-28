@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class ConnectedEntity extends Model
+{
+
+    /**
+     * The table associated with the model.
+     * (Optional if the table name is the plural snake_case of the model name)
+     */
+    protected $table = 'connectedEntities';
+
+    /**
+     * The attributes that are mass assignable.
+     */
+    protected $fillable = [
+        'type',             // manufacturer, importer, distributor, pharmacy
+        'name',
+        'address',
+        'country',
+        'contact',
+        'license_type',
+        'license_number',
+        'established_year',
+        'logo_path',
+        'is_active',
+    ];
+
+    /**
+     * Cast attributes to specific types.
+     */
+    protected $casts = [
+        'is_active' => 'boolean',
+        'established_year' => 'integer',
+    ];
+}

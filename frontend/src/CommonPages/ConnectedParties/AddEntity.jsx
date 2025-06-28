@@ -1,21 +1,42 @@
 import React, { useState } from 'react';
-// import { Link } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
-import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { addEntities } from '../../Shared/Services/entityService';
 
 const countries = ["USA", "India", "Germany", "Canada", "UK", "China", "France", "Others"];
 
+const allowedEntities = ['manufacturer', 'importer', 'distributor', 'pharmacy'];
+
+const licenseTypeLabels = {
+  manufacturer: 'Manufacturing License',
+  importer: 'Import License',
+  distributor: 'Distribution License',
+  pharmacy: 'Pharmacy License',
+};
+
 const AddEntity = () => {
-  const {entityType} = useParams()
+  const { entityType } = useParams();
+  const normalizedEntity = entityType?.toLowerCase();
+
+  if (!allowedEntities.includes(normalizedEntity)) {
+    return <Navigate to="/404" replace />;
+  }
+
+  const capitalizedEntity = normalizedEntity.charAt(0).toUpperCase() + normalizedEntity.slice(1);
+  const licenseLabel = licenseTypeLabels[normalizedEntity] || 'License Type';
+
   const [formData, setFormData] = useState({
+    type:entityType,
     name: '',
     address: '',
     country: '',
     contact: '',
+    company_email:'',
     licenseType: '',
     licenseNumber: '',
-    establishedYear: '',
+    established_year: '',
     logo: null
   });
 
@@ -32,13 +53,14 @@ const AddEntity = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Manufacturer name is required";
+    if (!formData.name.trim()) newErrors.name = `${capitalizedEntity} name is required`;
     if (!formData.address.trim()) newErrors.address = "Address is required";
     if (!formData.country) newErrors.country = "Country is required";
     if (!formData.contact.trim()) newErrors.contact = "Contact number is required";
-    if (!formData.licenseType.trim()) newErrors.licenseType = "License type is required";
+    if (!formData.company_email.trim()) newErrors.contact = "Contact number is required";
+    if (!formData.licenseType.trim()) newErrors.licenseType = `${licenseLabel} is required`;
     if (!formData.licenseNumber.trim()) newErrors.licenseNumber = "License number is required";
-    if (!formData.establishedYear) newErrors.establishedYear = "Year is required";
+    if (!formData.established_year) newErrors.established_year = "Year is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -46,20 +68,22 @@ const AddEntity = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+    addEntities(formData)
+      .then(response => {
+        console.log(response)
+      })
 
-    console.log("Manufacturer Data Submitted:", formData);
-    // Send to blockchain or backend API here
   };
 
   return (
     <div className="main-wrapper">
       <Header />
-      <Sidebar id='menu-item12' id1='menu-items12' activeClassName='add-manufacturer' />
+      <Sidebar id="menu-item12" id1="menu-items12" activeClassName={`add-${normalizedEntity}`} />
 
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
-            <h4 className="page-title">Register {entityType}</h4>
+            <h4 className="page-title">Register {capitalizedEntity}</h4>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -68,7 +92,7 @@ const AddEntity = () => {
 
                 <div className="col-md-6">
                   <div className="form-group">
-                    <label>{entityType} Name <span className="text-danger">*</span></label>
+                    <label>{capitalizedEntity} Name <span className="text-danger">*</span></label>
                     <input type="text" name="name" className="form-control" value={formData.name} onChange={handleChange} />
                     {errors.name && <small className="text-danger">{errors.name}</small>}
                   </div>
@@ -79,6 +103,14 @@ const AddEntity = () => {
                     <label>Contact Number <span className="text-danger">*</span></label>
                     <input type="text" name="contact" className="form-control" value={formData.contact} onChange={handleChange} />
                     {errors.contact && <small className="text-danger">{errors.contact}</small>}
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label>Company Email <span className="text-danger">*</span></label>
+                    <input type="email" name="company_email" className="form-control" value={formData.company_email} onChange={handleChange} />
+                    {errors.company_email && <small className="text-danger">{errors.company_email}</small>}
                   </div>
                 </div>
 
@@ -106,14 +138,14 @@ const AddEntity = () => {
                 <div className="col-md-6">
                   <div className="form-group">
                     <label>Established Year <span className="text-danger">*</span></label>
-                    <input type="number" name="establishedYear" min="1800" max="2099" className="form-control" value={formData.establishedYear} onChange={handleChange} />
-                    {errors.establishedYear && <small className="text-danger">{errors.establishedYear}</small>}
+                    <input type="number" name="established_year" min="1800" max="2099" className="form-control" value={formData.established_year} onChange={handleChange} />
+                    {errors.established_year && <small className="text-danger">{errors.established_year}</small>}
                   </div>
                 </div>
 
                 <div className="col-md-6">
                   <div className="form-group">
-                    <label>License Type <span className="text-danger">*</span></label>
+                    <label>{licenseLabel} <span className="text-danger">*</span></label>
                     <input type="text" name="licenseType" className="form-control" value={formData.licenseType} onChange={handleChange} />
                     {errors.licenseType && <small className="text-danger">{errors.licenseType}</small>}
                   </div>
@@ -135,7 +167,7 @@ const AddEntity = () => {
                 </div>
 
                 <div className="col-12 text-end">
-                  <button type="submit" className="btn btn-primary">Register {entityType}</button>
+                  <button type="submit" className="btn btn-primary">Register {capitalizedEntity}</button>
                 </div>
 
               </div>
