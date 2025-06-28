@@ -5,11 +5,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./CommonPages/login";
 import AddNewDrug from "./CommonPages/DrugInventory/AddNewDrug";
 import PosScreen from "./CommonPages/Pos/PosScreen";
-import AddManufacturer from "./CommonPages/ConnectedParties/AddManufacturer";
 import AddImporters from "./CommonPages/ConnectedParties/AddImporters";
 import CreateOrder from "./CommonPages/Transactions/CreateOrder";
 import OrderList from "./CommonPages/Approvals/OrderList";
 import OrderInvoice from "./CommonPages/Approvals/OrderInvoice";
+import AddEntity from "./CommonPages/ConnectedParties/AddManufacturer";
 
 //Accounts
 const Approuter = () => {
@@ -24,7 +24,7 @@ const Approuter = () => {
           <Route path="/login" element={<Login />} />
          
           <Route path="/create-drug" element={<AddNewDrug />} />
-          <Route path="/create-manufacturer" element={<AddManufacturer />} />
+          <Route path="/create/:entityType" element={<AddEntity />} />
           <Route path="/create-importers" element={<AddImporters />} />
           <Route path="/create-order" element={<CreateOrder />} />
           <Route path="/order-list" element={<OrderList />} />

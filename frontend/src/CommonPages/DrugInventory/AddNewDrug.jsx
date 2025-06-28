@@ -25,7 +25,6 @@ const AddNewDrug = () => {
     specifications: '',
     image: null,
     drugId: '',
-    manufacturer: '',
     activeIngredients: '',
     excipients: '',
     strength: '',
@@ -76,7 +75,6 @@ const AddNewDrug = () => {
     if (!formData.type) newErrors.type = "Please select the drug type.";
     if (!formData.dosages.length) newErrors.dosages = "Please add at least one dosage.";
     if (!formData.drugId.trim()) newErrors.drugId = "Please provide a Drug ID or SKU.";
-    if (!formData.manufacturer.trim()) newErrors.manufacturer = "Please enter the manufacturer's name.";
     if (!formData.activeIngredients.trim()) newErrors.activeIngredients = "Please specify the active ingredients.";
     if (!formData.strength.trim()) newErrors.strength = "Please enter the strength or concentration.";
     if (!formData.packagingType) newErrors.packagingType = "Please select a packaging type.";
@@ -108,7 +106,6 @@ const AddNewDrug = () => {
         specifications: '',
         image: null,
         drugId: '',
-        manufacturer: '',
         activeIngredients: '',
         excipients: '',
         strength: '',
@@ -197,20 +194,6 @@ const AddNewDrug = () => {
                   </div>
                 </div>
 
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label>Manufacturer <span className="text-danger">*</span></label>
-                    <input
-                      name="manufacturer"
-                      type="text"
-                      className="form-control"
-                      value={formData.manufacturer}
-                      onChange={handleChange}
-                      placeholder="e.g., Pfizer Inc."
-                    />
-                    {errors.manufacturer && <small className="text-danger">{errors.manufacturer}</small>}
-                  </div>
-                </div>
 
                 <div className="col-md-6">
                   <div className="form-group">
@@ -291,20 +274,6 @@ const AddNewDrug = () => {
                   </div>
                 </div>
 
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label>Pack Size <span className="text-danger">*</span></label>
-                    <input
-                      name="packSize"
-                      type="text"
-                      className="form-control"
-                      value={formData.packSize}
-                      onChange={handleChange}
-                      placeholder="e.g., 10 tablets, 100mL bottle"
-                    />
-                    {errors.packSize && <small className="text-danger">{errors.packSize}</small>}
-                  </div>
-                </div>
 
                 <div className="col-md-6">
                   <div className="form-group">

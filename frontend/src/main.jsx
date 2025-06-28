@@ -1,8 +1,6 @@
-import React from "react";
-import ReactDOM from 'react-dom/client';
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 
-// import { BrowserRouter } from "react-router-dom";
-import Approuter from "./approuter";
 
 // import { App } from "./app";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,21 +18,10 @@ import '../node_modules/bootstrap/dist/js/bootstrap.bundle.js';
 import 'primereact/resources/themes/lara-light-blue/theme.css'; // or another theme
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import App from './App.jsx'
 
-
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-    <Approuter/>
-);
-// ReactDOM.render(
-//     <BrowserRouter>
-//       <Approuter />
-//     </BrowserRouter>,
-//     document.getElementById("root")
-//   );
-
-// ReactDOM.render(
-//   <Approuter/>,
-// document.getElementById('root')
-// );
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)

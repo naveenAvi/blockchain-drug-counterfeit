@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 // import { Link } from 'react-router-dom';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
+import { useParams } from 'react-router-dom';
 
 const countries = ["USA", "India", "Germany", "Canada", "UK", "China", "France", "Others"];
 
-const AddManufacturer = () => {
+const AddEntity = () => {
+  const {entityType} = useParams()
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -57,7 +59,7 @@ const AddManufacturer = () => {
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
-            <h4 className="page-title">Register Manufacturer</h4>
+            <h4 className="page-title">Register {entityType}</h4>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -66,7 +68,7 @@ const AddManufacturer = () => {
 
                 <div className="col-md-6">
                   <div className="form-group">
-                    <label>Manufacturer Name <span className="text-danger">*</span></label>
+                    <label>{entityType} Name <span className="text-danger">*</span></label>
                     <input type="text" name="name" className="form-control" value={formData.name} onChange={handleChange} />
                     {errors.name && <small className="text-danger">{errors.name}</small>}
                   </div>
@@ -133,7 +135,7 @@ const AddManufacturer = () => {
                 </div>
 
                 <div className="col-12 text-end">
-                  <button type="submit" className="btn btn-primary">Register Manufacturer</button>
+                  <button type="submit" className="btn btn-primary">Register {entityType}</button>
                 </div>
 
               </div>
@@ -146,4 +148,4 @@ const AddManufacturer = () => {
   );
 };
 
-export default AddManufacturer;
+export default AddEntity;

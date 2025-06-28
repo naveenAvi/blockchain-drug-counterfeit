@@ -6,7 +6,7 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import { useState } from "react";
 
-import { Eye, EyeOff } from "feather-icons-react/build/IconComponents";
+import { Eye, EyeOff } from "feather-icons-react";
 
 // import ReactPasswordToggleIcon from 'react-password-toggle-icon';
 
