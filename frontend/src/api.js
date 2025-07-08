@@ -10,5 +10,5 @@ const api = axios.create({
 export const postData = async (url, data, config = {}) => {
   return api.post(url, data, config);
 };
-
+ 
 export default api; 
