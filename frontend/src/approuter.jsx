@@ -10,6 +10,11 @@ import CreateOrder from "./CommonPages/Transactions/CreateOrder";
 import OrderList from "./CommonPages/Approvals/OrderList";
 import OrderInvoice from "./CommonPages/Approvals/OrderInvoice";
 import AddEntity from "./CommonPages/ConnectedParties/AddEntity";
+import ListConnectedParties from "./CommonPages/ConnectedParties/ListConnectedParties";
+// import AddEntity from "./CommonPages/ConnectedParties/AddEntity";
+import EntityUserCreation from "./CommonPages/usermanagement/EntityUserCreation";
+import EntityUserList from "./CommonPages/usermanagement/EntityUserList";
+import ViewDrug from "./CommonPages/DrugInventory/ViewDrug/ViewDrug";
 
 //Accounts
 const Approuter = () => {
