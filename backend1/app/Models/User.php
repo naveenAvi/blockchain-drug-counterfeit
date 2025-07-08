@@ -19,6 +19,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'entID',
         'email',
         'password',
     ];
@@ -44,5 +45,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function entity()
+    {
+        return $this->belongsTo(ConnectedEntity::class, 'entID');
     }
 }

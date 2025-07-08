@@ -136,8 +136,12 @@ const Sidebar = (props) => {
                         Create Pharmacies</Link>
                     </li>
                     <li>
-                      <Link className={props?.activeClassName === 'order-list' ? 'active' : ''} to="/order-list">
+                      <Link className={props?.activeClassName === 'order-list' ? 'active' : ''} to="/list-party/importer">
                         Importer List</Link>
+                    </li>
+                    <li>
+                      <Link className={props?.activeClassName === 'order-list' ? 'active' : ''} to="/list-party/manufacturer">
+                        Manufacturer List</Link>
                     </li>
                   </ul>
                 </li>

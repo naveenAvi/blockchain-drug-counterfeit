@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('connectedEntities', function (Blueprint $table) {
             $table->string('email')->nullable()->after('contact');
+            $table->string('entID')->after('id');
         });
     }
 

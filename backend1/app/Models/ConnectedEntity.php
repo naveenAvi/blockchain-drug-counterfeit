@@ -17,8 +17,10 @@ class ConnectedEntity extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'type',             // manufacturer, importer, distributor, pharmacy
+        'type',
+        'entID',
         'name',
+        "email",
         'address',
         'country',
         'contact',
