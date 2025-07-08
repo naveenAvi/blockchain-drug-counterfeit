@@ -10,6 +10,7 @@ import CreateOrder from "./CommonPages/Transactions/CreateOrder";
 import OrderList from "./CommonPages/Approvals/OrderList";
 import OrderInvoice from "./CommonPages/Approvals/OrderInvoice";
 import AddEntity from "./CommonPages/ConnectedParties/AddEntity";
+import ViewDrug from "./CommonPages/DrugInventory/ViewDrug/ViewDrug";
 
 //Accounts
 const Approuter = () => {
@@ -29,6 +30,7 @@ const Approuter = () => {
           <Route path="/create-order" element={<CreateOrder />} />
           <Route path="/order-list" element={<OrderList />} />
           <Route path="/order-invoice" element={<OrderInvoice />} />
+          <Route path="/view-drug" element={<ViewDrug />} />
 
           
           
