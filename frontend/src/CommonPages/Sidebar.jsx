@@ -95,7 +95,7 @@ const Sidebar = (props) => {
                       <Link className={props?.activeClassName === 'create-drug' ? 'active' : ''} to="/create-drug">Add Drug</Link>
                     </li>
                     <li>
-                      <Link className={props?.activeClassName === 'create-drug' ? 'active' : ''} to="/create-drug">
+                      <Link className={props?.activeClassName === 'create-drug' ? 'active' : ''} to="/view-drug">
                         Drug List</Link>
                     </li>
                     <li>
