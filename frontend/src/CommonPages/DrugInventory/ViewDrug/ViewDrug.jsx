@@ -315,7 +315,7 @@ const ViewDrug = () => {
                       rowSelection={rowSelection}
                     />
 
-
+{/* hello */}
 
                     {showViewModal && (
                       <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
