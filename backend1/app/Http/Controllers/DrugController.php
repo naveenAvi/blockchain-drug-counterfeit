@@ -19,6 +19,15 @@ class DrugController extends Controller
             'data' => $drugs
         ]);
     }
+    public function getDrugDetails(): JsonResponse
+    {
+        $drugs = Drug::all();
+        return response()->json([
+            'success' => true,
+            'data' => $drugs
+        ]);
+    }
+    
 
     /**
      * Store a newly created drug in storage.

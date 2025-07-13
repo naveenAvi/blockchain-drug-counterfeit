@@ -1,6 +1,50 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
+import { getDrugs } from '../../Shared/Services/DrugService';
+import { getManufacturers } from '../../Shared/Services/manufacturerServices';
+import CreateOrderInvoice from '../../components/invoices/createOrderInvoice';
+
+ const request = {
+        invoiceNumber: 'INV-2025-001',
+        from: {
+            name: 'Importer Pvt Ltd',
+            phone: '9876543210',
+            address: '123 Market Road, Mumbai, Maharashtra, India',
+        },
+        to: {
+            name: 'Pharma Manufacturer Inc.',
+            phone: '1234567890',
+            address: '88 Industrial Park, Bengaluru, Karnataka, India',
+        },
+        issueDate: '2025-06-01',
+        dueDate: '2025-06-30',
+        dueAmount: '₹1,54,220',
+        items: [
+            {
+                description: 'Paracetamol 500mg',
+                category: 'Tablet',
+                rate: '₹2.50',
+                quantity: 10000,
+                discount: 5,
+                amount: '₹23,750',
+            },
+            {
+                description: 'Ibuprofen 400mg',
+                category: 'Tablet',
+                rate: '₹3.00',
+                quantity: 5000,
+                discount: 3,
+                amount: '₹14,550',
+            }
+        ],
+        total: '₹38,300',
+        tax: '₹1,200',
+        extra: '₹300',
+        discountTotal: '₹1,500',
+        finalTotal: '₹38,300',
+        referenceDoc: 'refdoc_001.pdf',
+    };
 
 // Placeholder: Fetch from backend/blockchain
 const drugs = [
@@ -14,6 +58,12 @@ const manufacturers = [
 ];
 
 const CreateOrder = () => {
+  const [drugs, setDrugs] = useState([]);
+  const [manufactuers, setmanufactuers] = useState([]);
+  const [invoiceshow, setinvoiceshow] = useState(false);
+
+
+
   const [selectedDrugId, setSelectedDrugId] = useState('');
   const [drugType, setDrugType] = useState('');
   const [dosage, setDosage] = useState('');
@@ -25,6 +75,54 @@ const CreateOrder = () => {
 
   const selectedDrug = drugs.find(d => d.id === parseInt(selectedDrugId));
 
+  const fetchDrugs = async () => {
+    getDrugs()
+      .then(response => {
+        let drugsData = [];
+        if (response.data) {
+          if (Array.isArray(response.data)) {
+            drugsData = response.data;
+          } else if (response.data.data && Array.isArray(response.data.data)) {
+            drugsData = response.data.data;
+          } else if (response.data.drugs && Array.isArray(response.data.drugs)) {
+            drugsData = response.data.drugs;
+          } else {
+            console.warn('Unexpected API response structure:', response.data);
+            drugsData = [];
+          }
+        }
+        setDrugs(drugsData);
+      })
+  }
+  const fetchManufacturers = async () => {
+    getManufacturers()
+      .then(response => {
+        let manufacturersData = [];
+        if (response.data) {
+          if (Array.isArray(response.data)) {
+            manufacturersData = response.data;
+          } else if (response.data.data && Array.isArray(response.data.data)) {
+            manufacturersData = response.data.data;
+          } else if (response.data.drugs && Array.isArray(response.data.drugs)) {
+            manufacturersData = response.data.drugs;
+          } else {
+            console.warn('Unexpected API response structure:', response.data);
+            manufacturersData = [];
+          }
+        }
+        setmanufactuers(manufacturersData);
+      })
+  }
+
+  useEffect(() => {
+    fetchDrugs();
+    fetchManufacturers();
+  }, [])
+
+
+
+
+
   const validate = () => {
     const newErrors = {};
     if (!selectedDrugId) newErrors.drug = "Please select a drug";
@@ -32,7 +130,7 @@ const CreateOrder = () => {
     if (!dosage) newErrors.dosage = "Select dosage";
     if (!manufacturerId) newErrors.manufacturer = "Select manufacturer";
     if (!invoiceNumber.trim()) newErrors.invoice = "Invoice number is required";
-    if (!referenceDoc) newErrors.reference = "Upload invoice or permit document";
+    // if (!referenceDoc) newErrors.reference = "Upload invoice or permit document";
     if (!amount || isNaN(amount)) newErrors.amount = "Enter valid amount";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -40,7 +138,7 @@ const CreateOrder = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    // if (!validate()) return;
 
     const order = {
       drugId: selectedDrugId,
@@ -54,6 +152,7 @@ const CreateOrder = () => {
     };
 
     console.log("ORDER SUBMITTED:", order);
+    setinvoiceshow(true)
     // You can then send this to your backend / smart contract
   };
 
@@ -89,46 +188,65 @@ const CreateOrder = () => {
                     {errors.drug && <small className="text-danger">{errors.drug}</small>}
                   </div>
                 </div>
-
-                {/* Type */}
                 {selectedDrug && (
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label>Drug Type <span className="text-danger">*</span></label>
-                      <select className="form-control" value={drugType} onChange={e => setDrugType(e.target.value)}>
-                        <option value="">Select Type</option>
-                        {selectedDrug.types.map(type => (
-                          <option key={type} value={type}>{type}</option>
-                        ))}
-                      </select>
-                      {errors.drugType && <small className="text-danger">{errors.drugType}</small>}
+                  <div className="card shadow-sm bg-light border-0">
+                    <div className="card-body">
+                      <h5 className="fw-bold mb-4 text-primary">
+                        Medicine Details - {selectedDrug.name}
+                      </h5>
+
+                      <div className="row">
+                        <div className="col-md-6 mb-2">
+                          <div className="d-flex align-items-center mb-2">
+                            <span className="me-2 text-muted">
+                              <i className="ti ti-award"></i>
+                            </span>
+                            <h6 className="mb-0 fw-bold">Dosage</h6>
+                          </div>
+                          <p className="text-secondary mb-0">{selectedDrug.dossages}</p>
+                        </div>
+
+                        <div className="col-md-6 mb-2">
+                          <div className="d-flex align-items-center mb-2">
+                            <span className="me-2 text-muted">
+                              <i className="ti ti-award"></i>
+                            </span>
+                            <h6 className="mb-0 fw-bold">Type</h6>
+                          </div>
+                          <p className="text-secondary mb-0">{selectedDrug.dosage_form}</p>
+                        </div>
+
+                        <div className="col-md-6 mb-2">
+                          <div className="d-flex align-items-center mb-2">
+                            <span className="me-2 text-muted">
+                              <i className="ti ti-award"></i>
+                            </span>
+                            <h6 className="mb-0 fw-bold">Excipients</h6>
+                          </div>
+                          <p className="text-secondary mb-0">{selectedDrug.excipients}</p>
+                        </div>
+
+                        <div className="col-md-6 mb-2">
+                          <div className="d-flex align-items-center mb-2">
+                            <span className="me-2 text-muted">
+                              <i className="ti ti-award"></i>
+                            </span>
+                            <h6 className="mb-0 fw-bold">National Drug Code</h6>
+                          </div>
+                          <p className="text-secondary mb-0">{selectedDrug.national_drug_code}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
 
-                {/* Dosage */}
-                {selectedDrug && (
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label>Dosage <span className="text-danger">*</span></label>
-                      <select className="form-control" value={dosage} onChange={e => setDosage(e.target.value)}>
-                        <option value="">Select Dosage</option>
-                        {selectedDrug.dosages.map(d => (
-                          <option key={d} value={d}>{d}</option>
-                        ))}
-                      </select>
-                      {errors.dosage && <small className="text-danger">{errors.dosage}</small>}
-                    </div>
-                  </div>
-                )}
 
-                {/* Manufacturer */}
                 <div className="col-md-6">
                   <div className="form-group">
                     <label>Manufacturer <span className="text-danger">*</span></label>
                     <select className="form-control" value={manufacturerId} onChange={e => setManufacturerId(e.target.value)}>
                       <option value="">Select Manufacturer</option>
-                      {manufacturers.map(m => (
+                      {manufactuers.map(m => (
                         <option key={m.id} value={m.id}>{m.name}</option>
                       ))}
                     </select>
@@ -172,8 +290,9 @@ const CreateOrder = () => {
           </form>
         </div>
       </div>
+      <CreateOrderInvoice  request={request} show={invoiceshow} onClose={setinvoiceshow} />
     </div>
   );
-};
 
+}
 export default CreateOrder;

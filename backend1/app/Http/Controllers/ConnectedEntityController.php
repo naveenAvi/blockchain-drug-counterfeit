@@ -29,6 +29,8 @@ class ConnectedEntityController extends Controller
             'data' => $entities
         ]);
     }
+
+    
     public function store(Request $request)
     {
         $validated = $request->validate([

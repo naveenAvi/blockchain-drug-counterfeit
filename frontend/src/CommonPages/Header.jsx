@@ -14,8 +14,10 @@ import {
   settingicon01,
   noteicon1,
 } from "./imagepath";
+import { useUser } from "../Shared/contexts/userContext";
 
 const Header = () => {
+  const { user } = useUser();
   const handlesidebar = () => {
     document.body.classList.toggle("mini-sidebar");
   };
@@ -90,8 +92,8 @@ const Header = () => {
               data-bs-toggle="dropdown"
             >
               <div className="user-names">
-                <h5>Admin </h5>
-                <span>Admin</span>
+                <h5>{user.name} </h5>
+                <span>{user.role} </span>
               </div>
               <span className="user-img">
                 <img src={user06} alt="Admin" />
