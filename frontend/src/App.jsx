@@ -1,13 +1,16 @@
 import { useState } from 'react'
 
 import Approuter from './approuter'
+import { UserProvider } from './Shared/contexts/userContext'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <Approuter />
+      <UserProvider>
+        <Approuter />
+      </UserProvider>
     </>
   )
 }

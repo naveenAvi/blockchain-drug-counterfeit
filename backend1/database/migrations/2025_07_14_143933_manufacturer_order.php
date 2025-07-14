@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        
+        Schema::create('importer_orders', function (Blueprint $table) {
             $table->integer('order_number')->autoIncrement();
             $table->string('invoice_number');
+            $table->string('reference_document')->nullable();
 
             $table->unsignedBigInteger('manufacturer_id');
-            $table->unsignedBigInteger('importer_id')->nullable(); // if importer is optional
+            $table->unsignedBigInteger('importer_id'); 
 
-            $table->date('order_date')->nullable();
-            $table->date('expected_delivery_date')->nullable();
+            $table->date('order_date')->default(now());
 
             $table->enum('status', ['pending', 'approved', 'rejected', 'shipped', 'delivered'])->default('pending');
             $table->integer('total_amount')->default(0);
@@ -33,9 +34,8 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('Importerorders');
     }
 };

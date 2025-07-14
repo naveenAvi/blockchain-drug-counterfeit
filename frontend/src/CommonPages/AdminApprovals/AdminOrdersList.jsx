@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
 import { getorderList } from '../../Shared/Services/ImporterServices';
 
-const OrderList = () => {
+const AdminOrdersList = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [datasource, setdatasource] = useState([]);
   
@@ -178,4 +178,4 @@ const OrderList = () => {
   );
 };
 
-export default OrderList;
+export default AdminOrdersList;

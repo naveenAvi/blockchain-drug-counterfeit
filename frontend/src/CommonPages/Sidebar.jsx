@@ -4,15 +4,22 @@ import React, { useEffect, useState } from 'react'
 import { Link } from "react-router-dom";
 import { blog, dashboard, doctor, doctorschedule, logout, menuicon04, menuicon06, menuicon08, menuicon09, menuicon10, menuicon11, menuicon12, menuicon14, menuicon15, menuicon16, patients, sidemenu } from './imagepath';
 import Scrollbars from "react-custom-scrollbars-2";
+import sidebarMenu from '../Shared/data/sidebarMenu';
+import { useUser } from '../Shared/contexts/userContext';
 
 
 const Sidebar = (props) => {
   const [sidebar, setSidebar] = useState("");
+  const [openMenu, setOpenMenu] = useState('');
+  const { user } = useUser();
+  const userRole = user?.role;
   const handleClick = (e, item, item1, item3) => {
+    e.preventDefault()
     const div = document.querySelector(`#${item}`);
     const ulDiv = document.querySelector(`.${item1}`);
     e?.target?.className ? ulDiv.style.display = 'none' : ulDiv.style.display = 'block'
     e?.target?.className ? div.classList.remove('subdrop') : div.classList.add('subdrop');
+    setOpenMenu((prev) => (prev === item ? '' : item));
   }
 
   useEffect(() => {
@@ -32,6 +39,12 @@ const Sidebar = (props) => {
   const expandMenuOpen = () => {
     document.body.classList.add("expand-menu");
   };
+
+  const isRoleAllowed = (allowedRoles) => {
+    return allowedRoles === 'all' || allowedRoles.includes(userRole);
+  };
+
+
   return (
     <>
       <div className="sidebar" id="sidebar">
@@ -72,101 +85,51 @@ const Sidebar = (props) => {
 
 
 
+                {sidebarMenu.map((menu, index) => {
+                  if (!isRoleAllowed(menu.allowedRoles)) return null;
 
+                  return (
+                    <li className="submenu" key={index}>
+                      <Link id={menu.id} onClick={(e) => handleClick(e, menu.id, menu.id + 's')}>
+                        <span className="menu-side">
+                          <img src={menu.icon} alt="" />
+                        </span>
+                        <span>{menu.menuName}</span>
+                        <span className="menu-arrow" />
+                      </Link>
 
+                      <ul
+                        style={{ display: openMenu === menu.id ? 'block' : 'none' }}
+                        className={menu.id + 's'}
+                      >
+                        {menu.submenuItems.map((item, subIndex) => {
+                          if (!isRoleAllowed(item.allowedRoles)) return null;
 
-
-
-
-
-
-                <li className="submenu">
-                  <Link to="#" id="menu-item1" onClick={(e) => {
-                    // setSidebar('Doctors')
-                    handleClick(e, "menu-item1", "menu-items1")
-                  }}>
-                    <span className="menu-side">
-                      <img src={doctor} alt="" />
-                    </span>{" "}
-                    <span> Drugs </span> <span className="menu-arrow" />
-                  </Link>
-                  <ul style={{ display: sidebar === 'Doctors' ? 'block' : 'none' }} className="menu-items1">
-                    <li>
-                      <Link className={props?.activeClassName === 'create-drug' ? 'active' : ''} to="/create-drug">Add Drug</Link>
+                          return (
+                            <li key={subIndex}>
+                              <Link
+                                className={location.pathname === item.path ? 'active' : ''}
+                                to={item.path}
+                              >
+                                {item.name}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </li>
-                    <li>
-                      <Link className={props?.activeClassName === 'create-drug' ? 'active' : ''} to="/view-drug">
-                        Drug List</Link>
-                    </li>
-                    <li>
-                      <Link className={props?.activeClassName === 'create-drug' ? 'active' : ''} to="/create-drug">
-                        Dossages</Link>
-                    </li>
-                  </ul>
-                </li>
+                  );
+                })}
 
 
 
-                <li className="submenu">
-                  <Link to="#" id="menu-create" onClick={(e) => {
-                    handleClick(e, "menu-create", "menu-Creates")
-                  }}>
-                    <span className="menu-side">
-                      <img src={doctor} alt="" />
-                    </span>{" "}
-                    <span> Parties </span> <span className="menu-arrow" />
-                  </Link>
-                  <ul style={{ display: sidebar === 'Orders' ? 'block' : 'none' }} className="menu-Creates">
-                    <li>
-                      <Link className={props?.activeClassName === 'create-manufacturer' ? 'active' : ''} to="/create/manufacturer">
-                        Create Manufacturer</Link>
-                    </li>
-
-                    <li>
-                      <Link className={props?.activeClassName === 'create-importers' ? 'active' : ''} to="/create/importers">
-                        Create Importers</Link>
-                    </li>
-
-                    <li>
-                      <Link className={props?.activeClassName === 'create-importers' ? 'active' : ''} to="/create/distributor">
-                        Create Distributors</Link>
-                    </li>
-                    <li>
-                      <Link className={props?.activeClassName === 'create-importers' ? 'active' : ''} to="/create/pharmacy">
-                        Create Pharmacies</Link>
-                    </li>
-                    <li>
-                      <Link className={props?.activeClassName === 'order-list' ? 'active' : ''} to="/list-party/importer">
-                        Importer List</Link>
-                    </li>
-                    <li>
-                      <Link className={props?.activeClassName === 'order-list' ? 'active' : ''} to="/list-party/manufacturer">
-                        Manufacturer List</Link>
-                    </li>
-                  </ul>
-                </li>
 
 
-                <li className="submenu">
-                  <Link to="#" id="menu-order" onClick={(e) => {
-                    handleClick(e, "menu-order", "menu-Orders")
-                  }}>
-                    <span className="menu-side">
-                      <img src={doctor} alt="" />
-                    </span>{" "}
-                    <span> Orders </span> <span className="menu-arrow" />
-                  </Link>
-                  <ul style={{ display: sidebar === 'Orders' ? 'block' : 'none' }} className="menu-Orders">
-                    <li>
-                      <Link className={props?.activeClassName === 'create-order' ? 'active' : ''} to="/create-order">Add order</Link>
-                    </li>
-                    <li>
-                      <Link className={props?.activeClassName === 'order-list' ? 'active' : ''} to="/order-list">
-                        Order List</Link>
-                    </li>
 
-                  </ul>
-                </li>
+
+
+
+
 
 
 

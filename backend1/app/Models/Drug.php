@@ -34,4 +34,13 @@ class Drug extends Model
     protected $casts = [
         'dosages' => 'array',
     ];
+
+    public function drug()
+    {
+        return $this->belongsTo(User::class, 'entID');
+    }
+    public function ImporterOrders()
+    {
+        return $this->belongsTo(ImporterOrder::class, 'drugid', 'id');
+    }
 } 

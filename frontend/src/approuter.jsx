@@ -15,6 +15,8 @@ import ListConnectedParties from "./CommonPages/ConnectedParties/ListConnectedPa
 import EntityUserCreation from "./CommonPages/usermanagement/EntityUserCreation";
 import EntityUserList from "./CommonPages/usermanagement/EntityUserList";
 import ViewDrug from "./CommonPages/DrugInventory/ViewDrug/ViewDrug";
+import LoggedInUserLayout from "./Shared/Layout/LoggedInUserLayout";
+import AdminOrdersList from "./CommonPages/AdminApprovals/AdminOrdersList";
 
 //Accounts
 const Approuter = () => {
@@ -23,28 +25,34 @@ const Approuter = () => {
   return (
     <>
       <BrowserRouter basename="/">
-      
+
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
-         
-          <Route path="/create-drug" element={<AddNewDrug />} />
-          <Route path="/create/:entityType" element={<AddEntity />} />
-          <Route path="/list-party/:entityType" element={<ListConnectedParties />} />
-          <Route path="/entity-user-create/:entityId" element={<EntityUserCreation />} />
-          <Route path="/entity-user-list/:entityId" element={<EntityUserList />} />
-          
 
-          
-          <Route path="/create-importers" element={<AddImporters />} />
-          <Route path="/create-order" element={<CreateOrder />} />
-          <Route path="/order-list" element={<OrderList />} />
-          <Route path="/order-invoice" element={<OrderInvoice />} />
-          <Route path="/view-drug" element={<ViewDrug />} />
 
-          
-          
-          <Route path="/pos" element={<PosScreen />} />
+          <Route element={<LoggedInUserLayout />}>
+            <Route path="/create-drug" element={<AddNewDrug />} />
+            <Route path="/create/:entityType" element={<AddEntity />} />
+            <Route path="/list-party/:entityType" element={<ListConnectedParties />} />
+            <Route path="/entity-user-create/:entityId" element={<EntityUserCreation />} />
+            <Route path="/entity-user-list/:entityId" element={<EntityUserList />} />
+
+
+
+            <Route path="/create-importers" element={<AddImporters />} />
+            <Route path="/create-order" element={<CreateOrder />} />
+            <Route path="/order-list" element={<OrderList />} />
+            <Route path="/order-invoice" element={<OrderInvoice />} />
+            <Route path="/view-drug" element={<ViewDrug />} />
+
+
+            <Route path="/importer-invoice-list" element={<OrderList />} />
+
+
+
+            <Route path="/pos" element={<PosScreen />} />
+          </Route>
         </Routes>
       </BrowserRouter>
       <div className="sidebar-overlay"></div>

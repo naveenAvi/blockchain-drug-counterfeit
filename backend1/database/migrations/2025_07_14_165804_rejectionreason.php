@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('connectedEntities', function (Blueprint $table) {
-            $table->string('email')->nullable()->after('contact');
-            $table->string('entID')->after('id');
+        Schema::table('importer_orders', function (Blueprint $table) {
+            $table->string('message')->nullable()->after('status');
         });
     }
 
@@ -22,6 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('connectedEntities');
+        //
     }
 };
