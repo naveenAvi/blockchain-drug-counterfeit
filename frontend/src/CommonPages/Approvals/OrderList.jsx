@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from "antd";
 import { onShowSizeChange, itemRender } from '../Pagination';
 import Header from '../Header';
@@ -7,9 +7,12 @@ import Sidebar from '../Sidebar';
 import { plusicon, refreshicon, searchnormal, pdficon, pdficon3, pdficon4, imagesend } from '../imagepath';
 import { Link } from 'react-router-dom';
 import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
+import { getorderList } from '../../Shared/Services/ImporterServices';
 
 const OrderList = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [datasource, setdatasource] = useState([]);
+  
 
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -20,51 +23,33 @@ const OrderList = () => {
     onChange: onSelectChange,
   };
 
-  // Sample Order Data (Replace this with backend/blockchain data)
-  const datasource = [
-    {
-      id: 1,
-      drugName: "Paracetamol",
-      type: "Tablet",
-      dosage: "500mg",
-      manufacturer: "Pfizer Inc.",
-      invoiceNumber: "INV-001",
-      referenceDoc: "invoice1.pdf",
-      amount: 1000,
-      status: "Pending"
-    },
-    {
-      id: 2,
-      drugName: "Amoxicillin",
-      type: "Liquid",
-      dosage: "10ml",
-      manufacturer: "Sun Pharma",
-      invoiceNumber: "INV-002",
-      referenceDoc: "permit.pdf",
-      amount: 2000,
-      status: "Approved"
-    }
-  ];
+  useEffect(() => {
+    getorderList().then((response) => {
+      setdatasource(response.data.data);
+    })
+  }, [])
+  
+  
 
-  const columns = [
+ const columns = [
     {
       title: "Drug Name",
-      dataIndex: "drugName",
+      dataIndex: "drug_name",
       sorter: (a, b) => a.drugName.localeCompare(b.drugName),
     },
     {
       title: "Type",
-      dataIndex: "type",
+      dataIndex: "drug_type",
       sorter: (a, b) => a.type.localeCompare(b.type),
     },
     {
-      title: "Dosage",
-      dataIndex: "dosage",
+      title: "Importer",
+      dataIndex: "importer_name",
       sorter: (a, b) => a.dosage.localeCompare(b.dosage),
     },
     {
       title: "Manufacturer",
-      dataIndex: "manufacturer",
+      dataIndex: "manufacturer_name",
       sorter: (a, b) => a.manufacturer.localeCompare(b.manufacturer),
     },
     {
@@ -78,29 +63,32 @@ const OrderList = () => {
       sorter: (a, b) => a.amount - b.amount,
     },
     {
-      title: "Reference Document",
-      dataIndex: "referenceDoc",
-      render: (text) => (
-        <Link to={`#`} download>
-          {text}
-        </Link>
-      )
-    },
-    {
       title: "Status",
       dataIndex: "status",
       render: (text) => (
-        <span className={`badge bg-${text === 'Approved' ? 'success' : text === 'Rejected' ? 'danger' : 'warning'}`}>
+        <span
+          className={`badge bg-${
+            text === "Approved"
+              ? "success"
+              : text === "Rejected"
+              ? "danger"
+              : "warning"
+          }`}
+        >
           {text}
         </span>
-      )
+      ),
     },
     {
       title: "Actions",
       render: (text, record) => (
         <div className="text-end">
           <div className="dropdown dropdown-action">
-            <Link to="#" className="action-icon dropdown-toggle" data-bs-toggle="dropdown">
+            <Link
+              to="#"
+              className="action-icon dropdown-toggle"
+              data-bs-toggle="dropdown"
+            >
               <i className="fas fa-ellipsis-v" />
             </Link>
             <div className="dropdown-menu dropdown-menu-end">
@@ -119,8 +107,8 @@ const OrderList = () => {
             </div>
           </div>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -177,8 +165,7 @@ const OrderList = () => {
                       }}
                       columns={columns}
                       dataSource={datasource}
-                      rowSelection={rowSelection}
-                      rowKey={(record) => record.id}
+                      rowKey={(record) => record.order_number}
                     />
                   </div>
                 </div>
@@ -186,7 +173,7 @@ const OrderList = () => {
             </div>
           </div>
         </div>
-      </div>  
+      </div>
     </>
   );
 };

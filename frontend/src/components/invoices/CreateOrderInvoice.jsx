@@ -1,16 +1,43 @@
 import { Modal } from 'react-bootstrap';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createOrder } from '../../Shared/Services/ImporterServices';
 
 
-const CreateOrderInvoice = ({ show, onClose, request }) => {
-   
+const CreateOrderInvoice = ({ order, onClose, request }) => {
 
+    console.log(order)
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectReason, setRejectReason] = useState('');
+    const [drugDetails, setdrugDetails] = useState({});
+    const [fromParty, setfromParty] = useState({});
+
+    useEffect(() => {
+        if (order) {
+            setdrugDetails(order.order.drug)
+            setfromParty(order.order.fromParty)
+            console.log(drugDetails)
+        }
+    }, [order])
+
 
     const handleRequestTokens = () => {
-        console.log('Token request initiated for:', request.invoiceNumber);
-        // Trigger token request logic
+        const payload = {
+            invoice_number: "11",
+            reference_document: null,
+            manufacturer_id: parseInt(order.order.manufacturerId),
+            importer_id: order.order.fromParty?.id, 
+            order_date: new Date().toISOString().split('T')[0], 
+            status: "pending",
+            total_amount: parseInt(order.order.amount),
+            notes: "", 
+            };
+
+        createOrder(payload)
+            .then(response => {
+                alert('Order created successfully!');
+             })
+            .catch(error => { })
+
     };
 
     const handleReject = () => {
@@ -22,106 +49,102 @@ const CreateOrderInvoice = ({ show, onClose, request }) => {
 
     return (
         <>
-            <Modal show={show} onHide={onClose} size="lg" centered>
+            <Modal show={order?.display} onHide={onClose} size="lg" centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Invoice Preview</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
 
-                        <div className="content container-fluid">
-                            <div className="row justify-content-center">
-                                <div className="col-xl-10">
-                                    <div className="card">
-                                        <div className="card-body">
+                    <div className="content container-fluid">
+                        <div className="row justify-content-center">
+                            <div className="col-xl-10">
+                                <div className="card">
+                                    <div className="card-body">
 
-                                            {/* Header */}
-                                            <div className="row mb-4">
-                                                <div className="col-md-6">
-                                                    <img src={'fgyhfgh'} alt="logo" style={{ height: 40 }} />
-                                                    <h4 className="mt-2">Request Details</h4>
-                                                    <p><strong>Invoice No:</strong> {request.invoiceNumber}</p>
-                                                </div>
-                                                <div className="col-md-6 text-md-end">
-                                                    <p><strong>Issue Date:</strong> {request.issueDate}</p>
-                                                    <p><strong>Due Date:</strong> {request.dueDate}</p>
-                                                    <p><strong>Due Amount:</strong> {request.dueAmount}</p>
-                                                </div>
+                                        {/* Header */}
+                                        <div className="row mb-4">
+                                            <div className="col-md-6">
+                                                <img src={'fgyhfgh'} alt="logo" style={{ height: 40 }} />
+                                                <h4 className="mt-2">Request Details</h4>
+                                                <p><strong>Invoice No:</strong> {request.invoiceNumber}</p>
                                             </div>
-
-                                            {/* Address Info */}
-                                            <div className="row mb-4">
-                                                <div className="col-md-6">
-                                                    <h6>From (Importer)</h6>
-                                                    <p>{request.from.name}<br />
-                                                        {request.from.phone}<br />
-                                                        {request.from.address}
-                                                    </p>
-                                                </div>
-                                                <div className="col-md-6">
-                                                    <h6>To (Manufacturer)</h6>
-                                                    <p>{request.to.name}<br />
-                                                        {request.to.phone}<br />
-                                                        {request.to.address}
-                                                    </p>
-                                                </div>
+                                            <div className="col-md-6 text-md-end">
+                                                <p><strong>Issue Date:</strong> {request.issueDate}</p>
+                                                <p><strong>Due Date:</strong> {request.dueDate}</p>
+                                                <p><strong>Due Amount:</strong> {request.dueAmount}</p>
                                             </div>
-
-                                            {/* Items Table */}
-                                            <div className="table-responsive mb-4">
-                                                <table className="table table-bordered">
-                                                    <thead className="table-light">
-                                                        <tr>
-                                                            <th>Description</th>
-                                                            <th>Category</th>
-                                                            <th>Rate/Item</th>
-                                                            <th>Quantity</th>
-                                                            <th>Discount (%)</th>
-                                                            <th className="text-end">Amount</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {request.items.map((item, index) => (
-                                                            <tr key={index}>
-                                                                <td>{item.description}</td>
-                                                                <td>{item.category}</td>
-                                                                <td>{item.rate}</td>
-                                                                <td>{item.quantity}</td>
-                                                                <td>{item.discount}%</td>
-                                                                <td className="text-end">{item.amount}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-
-                                            {/* Totals */}
-                                            <div className="row">
-                                                <div className="col-md-6">
-                                                    <p><strong>Reference Document:</strong> {request.referenceDoc}</p>
-                                                </div>
-                                                <div className="col-md-6 text-end">
-                                                    <p>Tax: <strong>{request.tax}</strong></p>
-                                                    <p>Extra Charges: <strong>{request.extra}</strong></p>
-                                                    <p>Discount: <strong>{request.discountTotal}</strong></p>
-                                                    <h5>Total: <strong>{request.finalTotal}</strong></h5>
-                                                </div>
-                                            </div>
-
-                                            {/* Action Buttons */}
-                                            <div className="text-end mt-4">
-                                                <button className="btn btn-success me-2" onClick={handleRequestTokens}>
-                                                    Request Tokens
-                                                </button>
-                                                <button className="btn btn-danger" onClick={() => setShowRejectModal(true)}>
-                                                    Reject
-                                                </button>
-                                            </div>
-
                                         </div>
+
+                                        {/* Address Info */}
+                                        <div className="row mb-4">
+                                            <div className="col-md-6">
+                                                <h6>From (Importer)</h6>
+                                                <p>{fromParty?.name}.<br />
+                                                    {fromParty?.address},<br />
+                                                    {fromParty?.country}.<br />
+                                                    {fromParty?.contact}
+                                                </p>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <h6>To (Manufacturer)</h6>
+                                                <p>{order?.order?.manufacturer?.name}.<br />
+                                                    {order?.order?.manufacturer?.address},<br />
+                                                    {order?.order?.manufacturer?.country}.<br />
+                                                    {order?.order?.manufacturer?.contact}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Items Table */}
+                                        <div className="table-responsive mb-4">
+                                            <table className="table table-bordered">
+                                                <thead className="table-light">
+                                                    <tr>
+                                                        <th>Description</th>
+                                                        <th>Form</th>
+                                                        <th>Rate/Item</th>
+                                                        <th className="text-end">Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr >
+                                                        <td>{drugDetails?.name}</td>
+                                                        <td>{drugDetails?.dosage_form}</td>
+                                                        <td>{drugDetails?.rate}</td>
+                                                        <td className="text-end">{order?.order?.amount}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        {/* Totals */}
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <p><strong>Reference Document:</strong> {request.invoiceNumber}</p>
+                                            </div>
+                                            <div className="col-md-6 text-end">
+                                                <p>Tax: <strong>{request.tax}</strong></p>
+                                                <p>Extra Charges: <strong>{request.extra}</strong></p>
+                                                <p>Discount: <strong>{request.discountTotal}</strong></p>
+                                                <h5>Total: <strong>{request.finalTotal}</strong></h5>
+                                            </div>
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div className="text-end mt-4">
+                                            <button className="btn btn-success me-2" onClick={handleRequestTokens}>
+                                                Request Tokens
+                                            </button>
+                                            <button className="btn btn-danger" onClick={() => setShowRejectModal(true)}>
+                                                Reject
+                                            </button>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </Modal.Body>
             </Modal>
 

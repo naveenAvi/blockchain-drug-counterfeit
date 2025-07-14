@@ -13,3 +13,7 @@ export const userLoginAction2 = async (credentials) => {
     withCredentials: true, 
   });
 };
+
+export async function myEntity(){
+    return axios.post(`${backendAPI}api/user/my-entity`, )
+}

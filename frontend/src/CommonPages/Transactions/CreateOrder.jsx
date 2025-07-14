@@ -4,6 +4,7 @@ import Sidebar from '../Sidebar';
 import { getDrugs } from '../../Shared/Services/DrugService';
 import { getManufacturers } from '../../Shared/Services/manufacturerServices';
 import CreateOrderInvoice from '../../components/invoices/createOrderInvoice';
+import { myEntity } from '../../Shared/Services/userServices';
 
  const request = {
         invoiceNumber: 'INV-2025-001',
@@ -60,7 +61,8 @@ const manufacturers = [
 const CreateOrder = () => {
   const [drugs, setDrugs] = useState([]);
   const [manufactuers, setmanufactuers] = useState([]);
-  const [invoiceshow, setinvoiceshow] = useState(false);
+  const [fromParty, setfromParty] = useState({});
+  const [invoiceshow, setinvoiceshow] = useState({display:false, order:{}});
 
 
 
@@ -117,6 +119,12 @@ const CreateOrder = () => {
   useEffect(() => {
     fetchDrugs();
     fetchManufacturers();
+    myEntity().then(response => {
+      const entity = response.data;
+      setfromParty(entity.entity)
+    }).catch(error => {
+      
+    } );
   }, [])
 
 
@@ -139,20 +147,21 @@ const CreateOrder = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // if (!validate()) return;
-
+    console.log(manufactuers)
     const order = {
       drugId: selectedDrugId,
-      drugName: selectedDrug?.name,
+      drug: selectedDrug,
+      manufacturer: manufactuers.find(m => m.id === parseInt(manufacturerId)),
       type: drugType,
       dosage,
       manufacturerId,
       invoiceNumber,
       referenceDoc,
-      amount
+      amount,
+      fromParty
     };
 
-    console.log("ORDER SUBMITTED:", order);
-    setinvoiceshow(true)
+    setinvoiceshow({display:true, order})
     // You can then send this to your backend / smart contract
   };
 
@@ -290,7 +299,7 @@ const CreateOrder = () => {
           </form>
         </div>
       </div>
-      <CreateOrderInvoice  request={request} show={invoiceshow} onClose={setinvoiceshow} />
+      <CreateOrderInvoice  request={request} order={invoiceshow} onClose={setinvoiceshow} />
     </div>
   );
 

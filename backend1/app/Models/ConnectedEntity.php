@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Workbench\App\Models\User;
 
 class ConnectedEntity extends Model
 {
@@ -38,4 +39,8 @@ class ConnectedEntity extends Model
         'is_active' => 'boolean',
         'established_year' => 'integer',
     ];
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'entID');
+    }
 }

@@ -66,26 +66,26 @@ class userController extends Controller
         ]);
     }
 
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+   public function login(Request $request)
+{
+    $request->validate([
+        'email' => 'required|string|email',
+        'password' => 'required|string',
+    ]);
 
-        $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
-
-        $token = $user->createToken('api-token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ]);
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
+
+    $token = $user->createToken('api-token')->plainTextToken;
+
+    $userData = $user->toArray();
+    $userData['token'] = $token;
+
+    return response()->json(['user' => $userData]);
+}
 
     public function logout(Request $request)
     {
@@ -98,4 +98,11 @@ class userController extends Controller
     {
         return response()->json($request->user());
     }
+    public function myEntity(Request $request)
+    {
+        $user = $request->user()->load('entity');
+
+        return response()->json($user);
+    }
+    
 }

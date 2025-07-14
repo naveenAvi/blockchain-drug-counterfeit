@@ -51,6 +51,6 @@ class User extends Authenticatable
 
     public function entity()
     {
-        return $this->belongsTo(ConnectedEntity::class, 'entID');
+        return $this->belongsTo(ConnectedEntity::class, 'entID', 'entID');
     }
 }

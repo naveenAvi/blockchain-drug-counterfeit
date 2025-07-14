@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConnectedEntityController;
 use App\Http\Controllers\DrugController;
+use App\Http\Controllers\ImporterOrdersController;
 
 Route::get('/k', function () {
     return 'asdadsad';
@@ -31,18 +32,32 @@ Route::post('/register', [userController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
 
+
+
 Route::middleware(['auth:sanctum', 'role:manufacturer'])->group(function () {
     // my orders list, ordered by me
-    Route::delete('/manufcaturer/list-orders', [DrugController::class, 'destroy']);
+    Route::post('/manufcaturer/list-orders', [DrugController::class, 'destroy']);
 
-    Route::delete('/manufcaturer/create-order', [DrugController::class, 'destroy']);
-    Route::delete('/manufcaturer/cancel-order', [DrugController::class, 'destroy']);
+    Route::post('/manufcaturer/create-order', [DrugController::class, 'destroy']);
+    Route::post('/manufcaturer/cancel-order', [DrugController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum','role:importer'])->group(function () {
+    Route::post('/importer/create-order', [ImporterOrdersController::class, 'store']);
+
 });
 
 Route::middleware(['auth:sanctum', 'role:distributor'])->group(function () {
     // recieved to me and i sent transactions
-    Route::delete('/distributor/orders-hisotry', [DrugController::class, 'destroy']);
+    Route::post('/distributor/orders-hisotry', [DrugController::class, 'destroy']);
 
-    Route::delete('/distributor/create-order', [DrugController::class, 'destroy']);
-    Route::delete('/distributor/cancel-order', [DrugController::class, 'destroy']);
+    Route::post('/distributor/create-order', [DrugController::class, 'destroy']);
+    Route::post('/distributor/cancel-order', [DrugController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/user/my-entity', [UserController::class, 'myEntity']);
+
+    Route::post('/importer/get-importer-orders', [ImporterOrdersController::class, 'show']);
+
 });
