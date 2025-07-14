@@ -24,7 +24,8 @@ class ImporterOrder extends Model
         'status',
         'total_amount',
         'notes',
-        'drugid'
+        'drugid',
+        "message"
     ];
 
     protected $casts = [

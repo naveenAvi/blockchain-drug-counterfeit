@@ -78,13 +78,13 @@ const sidebarMenu = [
       {
         name: "Add Order",
         path: "/create-order",
-        allowedRoles: ["manufacturer", "importer"]
+        allowedRoles: [ "importer"]
       },
       {
         name: "Order List",
         path: "/order-list",
-        allowedRoles: "all"
-      }
+        allowedRoles: ["admin", "importer"]
+      },
     ]
   },
   

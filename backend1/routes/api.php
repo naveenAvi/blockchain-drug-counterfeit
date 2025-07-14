@@ -59,5 +59,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/user/my-entity', [UserController::class, 'myEntity']);
 
     Route::post('/importer/get-importer-orders', [ImporterOrdersController::class, 'show']);
+    Route::post('/importer/get-importer-orderss', [ImporterOrdersController::class, 'showimportDetails']);
+
+    
 
 });

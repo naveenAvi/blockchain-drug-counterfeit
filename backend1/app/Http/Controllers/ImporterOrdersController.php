@@ -33,6 +33,17 @@ class ImporterOrdersController extends Controller
             'data' => $filteredOrders
         ]);
     }
+
+    public function shows()
+    {
+        $order = ImporterOrder::get()->load('drug', "manufacturer","importer");
+
+
+        return response()->json([
+            'success' => true,
+            'data' => $order
+        ]);
+    }
     public function store(Request $request)
     {
         $validated = $request->validate([
