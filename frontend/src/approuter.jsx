@@ -20,6 +20,7 @@ import AdminOrdersList from "./CommonPages/AdminApprovals/AdminOrdersList";
 import OrderListView from "./CommonPages/Approvals/OrderListView";
 
 import CommonTransfer from "./CommonPages/Transactions/CommonTransfer";
+import TransactionHistory from "./CommonPages/Transactions/TransactionHistory";
 //Accounts
 const Approuter = () => {
   // eslint-disable-next-line no-unused-vars
@@ -52,6 +53,9 @@ const Approuter = () => {
 
 
             <Route path="/importer-invoice-list" element={<OrderList />} />
+            <Route path="/drug-history" element={<TransactionHistory />} />
+
+            
 
 <Route path="/transfer-tokens" element={<CommonTransfer />} />
 
