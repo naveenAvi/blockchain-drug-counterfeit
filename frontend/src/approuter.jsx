@@ -57,7 +57,7 @@ const Approuter = () => {
 
             
 
-<Route path="/transfer-tokens" element={<CommonTransfer />} />
+            <Route path="/transfer-tokens" element={<CommonTransfer />} />
 
             <Route path="/pos" element={<PosScreen />} />
           </Route>
