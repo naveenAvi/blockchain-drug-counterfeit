@@ -17,6 +17,10 @@ import EntityUserList from "./CommonPages/usermanagement/EntityUserList";
 import ViewDrug from "./CommonPages/DrugInventory/ViewDrug/ViewDrug";
 import LoggedInUserLayout from "./Shared/Layout/LoggedInUserLayout";
 import AdminOrdersList from "./CommonPages/AdminApprovals/AdminOrdersList";
+import  OrderListView from "./CommonPages/Approvals/OrderListView";
+import CreateUsers from "./CommonPages/userManagement/CreateUsers";
+import Dashboard from "./CommonPages/Dashboard/Dashboard";
+
 
 //Accounts
 const Approuter = () => {
@@ -44,10 +48,15 @@ const Approuter = () => {
             <Route path="/create-order" element={<CreateOrder />} />
             <Route path="/order-list" element={<OrderList />} />
             <Route path="/order-invoice" element={<OrderInvoice />} />
-            <Route path="/view-drug" element={<ViewDrug />} />
+            <Route path="/view-drug" element={<ViewDrug />} />  
+          
+            <Route path="/order-list-view/:orderId" element={<OrderListView />} />
 
 
             <Route path="/importer-invoice-list" element={<OrderList />} />
+            <Route path="/create-users" element={<CreateUsers/>}/>
+            <Route path="/Manufacturer-dashboard" element={<Dashboard/>}/>
+
 
 
 
