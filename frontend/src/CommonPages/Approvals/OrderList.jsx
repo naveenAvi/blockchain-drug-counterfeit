@@ -92,7 +92,7 @@ const OrderList = () => {
               <i className="fas fa-ellipsis-v" />
             </Link>
             <div className="dropdown-menu dropdown-menu-end">
-              <Link className="dropdown-item" to="#">
+              <Link className="dropdown-item" to={`/order-list-view/5`}>
                 <i className="far fa-eye me-2" />
                 View
               </Link>
