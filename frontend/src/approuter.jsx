@@ -20,7 +20,6 @@ import AdminOrdersList from "./CommonPages/AdminApprovals/AdminOrdersList";
 import OrderListView from "./CommonPages/Approvals/OrderListView";
 
 import CommonTransfer from "./CommonPages/Transactions/CommonTransfer";
-import OrderListView from "./CommonPages/Approvals/OrderListView";
 //Accounts
 const Approuter = () => {
   // eslint-disable-next-line no-unused-vars
