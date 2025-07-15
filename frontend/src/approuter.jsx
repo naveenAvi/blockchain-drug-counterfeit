@@ -19,6 +19,7 @@ import LoggedInUserLayout from "./Shared/Layout/LoggedInUserLayout";
 import AdminOrdersList from "./CommonPages/AdminApprovals/AdminOrdersList";
 
 import CommonTransfer from "./CommonPages/Transactions/CommonTransfer";
+import OrderListView from "./CommonPages/Approvals/OrderListView";
 //Accounts
 const Approuter = () => {
   // eslint-disable-next-line no-unused-vars
@@ -52,7 +53,7 @@ const Approuter = () => {
 
             <Route path="/importer-invoice-list" element={<OrderList />} />
 
-<Route path="/transfer-tokens" element={<CommonTransfer />} />
+            <Route path="/transfer-tokens" element={<CommonTransfer />} />
 
             <Route path="/pos" element={<PosScreen />} />
           </Route>
