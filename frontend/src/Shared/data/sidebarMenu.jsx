@@ -85,6 +85,12 @@ const sidebarMenu = [
         path: "/order-list",
         allowedRoles: ["admin", "importer"]
       },
+{
+        name: "Transfer",
+        path: "/transfer-tokens",
+        allowedRoles: "all"
+      },
+      
     ]
   },
   

@@ -17,6 +17,7 @@ import EntityUserList from "./CommonPages/usermanagement/EntityUserList";
 import ViewDrug from "./CommonPages/DrugInventory/ViewDrug/ViewDrug";
 import LoggedInUserLayout from "./Shared/Layout/LoggedInUserLayout";
 import AdminOrdersList from "./CommonPages/AdminApprovals/AdminOrdersList";
+import CommonTransfer from "./CommonPages/Transactions/CommonTransfer";
 
 //Accounts
 const Approuter = () => {
@@ -48,6 +49,8 @@ const Approuter = () => {
 
 
             <Route path="/importer-invoice-list" element={<OrderList />} />
+            <Route path="/transfer-tokens" element={<CommonTransfer />} />
+            
 
 
 
