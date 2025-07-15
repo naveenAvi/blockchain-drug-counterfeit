@@ -20,10 +20,12 @@ export const UserProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    console.log(user)
-    const requestInterceptor = axios.interceptors.request.use(
+    console.log(user?.token, "User token in UserProvider");
+    axios.interceptors.request.use(
       (config) => {
         if (user?.token) {
+    console.log(user?.token, "bearer token setted");
+
           config.headers.Authorization = `Bearer ${user.token}`;
         }
         return config;
@@ -31,20 +33,20 @@ export const UserProvider = ({ children }) => {
       (error) => Promise.reject(error)
     );
 
-    const responseInterceptor = axios.interceptors.response.use(
+    axios.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          setUser(null);
+          //setUser(null);
         }
         return Promise.reject(error);
       }
     );
 
-    return () => {
-      axios.interceptors.request.eject(requestInterceptor);
-      axios.interceptors.response.eject(responseInterceptor);
-    };
+    // return () => {
+    //   axios.interceptors.request.eject(requestInterceptor);
+    //   axios.interceptors.response.eject(responseInterceptor);
+    // };
   }, [user]);
 
   return (
