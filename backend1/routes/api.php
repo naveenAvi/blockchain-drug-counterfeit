@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConnectedEntityController;
 use App\Http\Controllers\DrugController;
 use App\Http\Controllers\ImporterOrdersController;
+use App\Http\Controllers\DrugWalletController;
 
 Route::get('/k', function () {
     return 'asdadsad';
@@ -61,6 +62,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/importer/get-importer-orders', [ImporterOrdersController::class, 'show']);
     Route::post('/importer/get-importer-orderss', [ImporterOrdersController::class, 'showimportDetails']);
 
+    Route::post('/my/drug-amount/{drugid}', [DrugWalletController::class, 'showByDrugId']);
     
 
 });

@@ -17,11 +17,8 @@ import EntityUserList from "./CommonPages/usermanagement/EntityUserList";
 import ViewDrug from "./CommonPages/DrugInventory/ViewDrug/ViewDrug";
 import LoggedInUserLayout from "./Shared/Layout/LoggedInUserLayout";
 import AdminOrdersList from "./CommonPages/AdminApprovals/AdminOrdersList";
-import  OrderListView from "./CommonPages/Approvals/OrderListView";
-import CreateUsers from "./CommonPages/userManagement/CreateUsers";
-import Dashboard from "./CommonPages/Dashboard/Dashboard";
 
-
+import CommonTransfer from "./CommonPages/Transactions/CommonTransfer";
 //Accounts
 const Approuter = () => {
   // eslint-disable-next-line no-unused-vars
@@ -54,11 +51,8 @@ const Approuter = () => {
 
 
             <Route path="/importer-invoice-list" element={<OrderList />} />
-            <Route path="/create-users" element={<CreateUsers/>}/>
-            <Route path="/Manufacturer-dashboard" element={<Dashboard/>}/>
 
-
-
+<Route path="/transfer-tokens" element={<CommonTransfer />} />
 
             <Route path="/pos" element={<PosScreen />} />
           </Route>

@@ -21,7 +21,7 @@ class userController extends Controller
             'designation'   => 'nullable|string|max:255',
             'entID'         => 'required|exists:connectedEntities,entID',
         ]);
-
+ 
         $plainPassword = Str::random(10);
 
         $user = User::create([
@@ -66,6 +66,7 @@ class userController extends Controller
         ]);
     }
 
+    
    public function login(Request $request)
 {
     $request->validate([
