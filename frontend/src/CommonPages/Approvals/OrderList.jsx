@@ -155,7 +155,7 @@ const OrderList = () => {
                     </div>
                   </div>
 
-                  <div className="table-responsive">
+                  <div className="table-responsive p-4">
                     <Table
                       pagination={{
                         total: datasource.length,

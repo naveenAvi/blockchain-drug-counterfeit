@@ -20,6 +20,8 @@ import AdminOrdersList from "./CommonPages/AdminApprovals/AdminOrdersList";
 import OrderListView from "./CommonPages/Approvals/OrderListView";
 
 import CommonTransfer from "./CommonPages/Transactions/CommonTransfer";
+import ManufactureDashboard from "./CommonPages/Dashboard/Manufacture-dashboard";
+import DistributorDashboard from "./CommonPages/Dashboard/Distributor-dashboard copy";
 //Accounts
 const Approuter = () => {
   // eslint-disable-next-line no-unused-vars
@@ -54,6 +56,8 @@ const Approuter = () => {
             <Route path="/importer-invoice-list" element={<OrderList />} />
 
             <Route path="/transfer-tokens" element={<CommonTransfer />} />
+            <Route path="/manufacture-dashboard" element={<ManufactureDashboard />} />
+            <Route path="/distributor-dashboard" element={<DistributorDashboard />} />
 
             <Route path="/pos" element={<PosScreen />} />
           </Route>

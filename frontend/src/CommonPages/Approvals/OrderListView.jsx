@@ -37,7 +37,7 @@ const OrderListView = () => {
           </div>
 
           <div className="row justify-content-center">
-            <div className="col-md-8">
+            <div className="col-md-12">
               <div className="card">
                 <div className="card-body">
                   <h3 className="mb-4">Order Details</h3>
