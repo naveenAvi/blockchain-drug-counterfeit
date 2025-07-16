@@ -34,6 +34,11 @@ Route::post('/register', [userController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/transaction-history', [DrugTransactionController::class, 'index']);
+Route::post('/create-user', [userController::class, 'corp_store']);
+
+Route::post('/order-history', [ImporterOrdersController::class, 'shows']);
+
+
 
 
 

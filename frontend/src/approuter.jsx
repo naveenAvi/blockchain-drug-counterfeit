@@ -21,6 +21,9 @@ import OrderListView from "./CommonPages/Approvals/OrderListView";
 
 import CommonTransfer from "./CommonPages/Transactions/CommonTransfer";
 import TransactionHistory from "./CommonPages/Transactions/TransactionHistory";
+import CreateUsers from "./CommonPages/userManagement/CreateUsers";
+import Register from "./CommonPages/Register/Register";
+import OrderHistory from "./CommonPages/SendDrug/OrderHistory/OrderHistory";
 //Accounts
 const Approuter = () => {
   // eslint-disable-next-line no-unused-vars
@@ -32,6 +35,8 @@ const Approuter = () => {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
 
 
           <Route element={<LoggedInUserLayout />}>
@@ -53,7 +58,12 @@ const Approuter = () => {
 
 
             <Route path="/importer-invoice-list" element={<OrderList />} />
-            <Route path="/drug-history" element={<TransactionHistory />} />
+            <Route path="/transaction-history" element={<TransactionHistory />} />
+            <Route path="/order-history" element={<OrderHistory />} />
+
+            <Route path="/create-user" element={<CreateUsers />} />
+
+        
 
             
 
