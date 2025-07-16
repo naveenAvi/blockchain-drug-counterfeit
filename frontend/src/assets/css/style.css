@@ -9387,6 +9387,10 @@ td.add-remove {
 }
 .page-header {
   margin-bottom: 1.875rem;
+    background-color: #1677ff2e;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .invoices-table.custom-table tbody tr {
   box-shadow: none;
