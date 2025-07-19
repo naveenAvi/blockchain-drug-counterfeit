@@ -306,7 +306,7 @@ table.table td h2 span {
   color: #333448;
   font-size: 18px;
   font-weight: normal;
-  margin-bottom: 25px;
+  /* margin-bottom: 25px; */
 }
 .page-sub-title {
   color: #565656;
