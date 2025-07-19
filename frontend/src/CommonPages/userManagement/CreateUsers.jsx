@@ -2,19 +2,43 @@ import React, { useState } from 'react';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
 import { Link } from 'react-router-dom';
+import { postData } from '../../api';
 
 const CreateUsers = () => {
-  const [form, setForm] = useState({ name: '', email: '' });
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', designation: '', entID: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
     setSubmitted(true);
-    // Here you would handle the user creation logic (API call, etc.)
+    try {
+      const payload = {
+        firstname: form.firstName,
+        lastname: form.lastName,
+        email: form.email,
+        designation: form.designation,
+        entID: form.entID,
+      };
+      await postData('/create-user', payload);
+      setSuccess('User created successfully!');
+      setForm({ firstName: '', lastName: '', email: '', designation: '', entID: '' });
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.errors) {
+        // Laravel validation errors
+        const messages = Object.values(err.response.data.errors).flat().join(' ');
+        setError(messages);
+      } else {
+        setError('Failed to create user.');
+      }
+    }
   };
 
   return (
@@ -41,15 +65,27 @@ const CreateUsers = () => {
                   <h3 className="mb-4 text-center">Create User</h3>
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <label className="form-label"><strong>User Name</strong></label>
+                      <label className="form-label"><strong>First Name</strong></label>
                       <input
                         type="text"
                         className="form-control"
-                        name="name"
-                        value={form.name}
+                        name="firstName"
+                        value={form.firstName}
                         onChange={handleChange}
                         required
-                        placeholder="Enter user name"
+                        placeholder="Enter first name"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="form-label"><strong>Last Name</strong></label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="lastName"
+                        value={form.lastName}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter last name"
                       />
                     </div>
                     <div className="mb-4">
@@ -64,10 +100,38 @@ const CreateUsers = () => {
                         placeholder="Enter email address"
                       />
                     </div>
+                    <div className="mb-4">
+                      <label className="form-label"><strong>Designation</strong> <span className="text-muted">(optional)</span></label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="designation"
+                        value={form.designation}
+                        onChange={handleChange}
+                        placeholder="Enter designation"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="form-label"><strong>Entity ID</strong></label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="entID"
+                        value={form.entID}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter entity ID"
+                      />
+                    </div>
                     <button type="submit" className="btn btn-primary w-100 py-2">Submit</button>
-                    {submitted && (
+                    {success && (
                       <div className="alert alert-success mt-4" role="alert">
-                        User created (mock)!
+                        {success}
+                      </div>
+                    )}
+                    {error && (
+                      <div className="alert alert-danger mt-4" role="alert">
+                        {error}
                       </div>
                     )}
                   </form>
