@@ -129,7 +129,7 @@ const CommonTransfer = () => {
   const [manufacturerId, setManufacturerId] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [referenceDoc, setReferenceDoc] = useState(null);
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState(''); 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
