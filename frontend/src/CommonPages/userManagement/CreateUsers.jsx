@@ -3,6 +3,7 @@ import Header from '../Header';
 import Sidebar from '../Sidebar';
 import { Link } from 'react-router-dom';
 import { postData } from '../../api';
+const [loading, setLoading] = useState(false); // Spinner state
 
 const CreateUsers = () => {
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', designation: '', entID: '' });
@@ -32,12 +33,13 @@ const CreateUsers = () => {
       setForm({ firstName: '', lastName: '', email: '', designation: '', entID: '' });
     } catch (err) {
       if (err.response && err.response.data && err.response.data.errors) {
-        // Laravel validation errors
         const messages = Object.values(err.response.data.errors).flat().join(' ');
         setError(messages);
       } else {
         setError('Failed to create user.');
       }
+    } finally {
+      setLoading(false); // Stop spinner
     }
   };
 
@@ -123,7 +125,13 @@ const CreateUsers = () => {
                         placeholder="Enter entity ID"
                       />
                     </div>
-                    <button type="submit" className="btn btn-primary w-100 py-2">Submit</button>
+
+                    <button type="submit" className="btn btn-primary w-100 py-2" disabled={loading}>
+                      {loading ? (
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      ) : null}
+                      {loading ? 'Submitting...' : 'Submit'}
+                    </button>
                     {success && (
                       <div className="alert alert-success mt-4" role="alert">
                         {success}

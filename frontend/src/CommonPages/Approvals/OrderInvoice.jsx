@@ -4,6 +4,9 @@ import Sidebar from '../Sidebar';
 import { logodark } from '../imagepath';
 
 const OrderInvoice = () => {
+
+  const [loading, setLoading] = useState(false);
+
   const request ={
     invoiceNumber: 'INV-2025-001',
     from: {
