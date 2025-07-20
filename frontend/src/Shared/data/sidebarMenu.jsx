@@ -3,11 +3,36 @@ import { doctor } from "../../CommonPages/imagepath";
 
 const sidebarMenu = [
   {
+    id: "menu-item0",
+    submenuId: "menu-items0",
+    menuName: "Dashboard",
+    icon: doctor,
+    allowedRoles: "all",
+    toggleKey: "menuitems0",
+    submenuItems: [
+      {
+        name: "dashboard",
+        path: "/manufacture-dashboard",
+        allowedRoles: ["manufacturer"]
+      },
+      {
+        name: "dashboard",
+        path: "/distributor-dashboard",
+        allowedRoles: "distributor"
+      },
+      {
+        name: "dashboard",
+        path: "/importer-dashboard",
+        allowedRoles: ["importer"]
+      }
+    ]
+  },
+  {
     id: "menu-item1",
     submenuId: "menu-items1",
     menuName: "Drugs",
     icon: doctor,
-    allowedRoles: "all",
+    allowedRoles: "admin",
     toggleKey: "Drugs",
     submenuItems: [
       {
@@ -18,12 +43,12 @@ const sidebarMenu = [
       {
         name: "Drug List",
         path: "/view-drug",
-        allowedRoles: "all"
+        allowedRoles: "admin"
       },
       {
         name: "Dossages",
         path: "/create-dosage",
-        allowedRoles: ["manufacturer"]
+        allowedRoles: ["admin"]
       }
     ]
   },

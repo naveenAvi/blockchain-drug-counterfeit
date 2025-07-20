@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import { confirmAndCreateTokens, getManuorderListByID } from '../../Shared/Services/manufacturerServices';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import AlertService from '../../notificationService';
 
 const OrderListView = () => {
   const { orderId } = useParams();
@@ -33,6 +34,9 @@ const OrderListView = () => {
   const confirmcreation = () =>{
     confirmAndCreateTokens(order).then(response => {
       console.log("Tokens created successfully", response.data);
+      AlertService.success('Created and assigned to the manufacturer');
+    }).catch(error => {
+      AlertService.error('Failed to create tokens: ' + error.message);
     })
   }
 

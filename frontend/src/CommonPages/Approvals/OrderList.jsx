@@ -79,7 +79,7 @@ const OrderList = () => {
       dataIndex: "status",
       render: (text) => (
         <span
-          className={`badge bg-${text === "Approved"
+          className={`badge bg-${text === "approved"
               ? "success"
               : text === "Rejected"
                 ? "danger"
@@ -96,26 +96,11 @@ const OrderList = () => {
         <div className="text-end">
           <div className="dropdown dropdown-action">
             <Link
-              to="#"
-              className="action-icon dropdown-toggle"
-              data-bs-toggle="dropdown"
+              to={`/order-list-view/5`}
+              className="action-icon"
             >
-              <i className="fas fa-ellipsis-v" />
+              <i className="fas fa-eye" />
             </Link>
-            <div className="dropdown-menu dropdown-menu-end">
-              <Link className="dropdown-item" to={`/order-list-view/5`}>
-                <i className="far fa-eye me-2" />
-                View
-              </Link>
-              <Link className="dropdown-item" to="#">
-                <i className="far fa-check-circle me-2" />
-                Approve
-              </Link>
-              <Link className="dropdown-item" to="#">
-                <i className="far fa-times-circle me-2" />
-                Reject
-              </Link>
-            </div>
           </div>
         </div>
       ),
@@ -140,7 +125,7 @@ const OrderList = () => {
           </div>
 
 
-          <QRModal />
+          {/* <QRModal /> */}
           <div className="row">
             <div className="col-sm-12">
               <div className="card card-table">

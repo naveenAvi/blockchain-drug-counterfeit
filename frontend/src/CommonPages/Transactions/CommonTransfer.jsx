@@ -7,6 +7,8 @@ import CreateOrderInvoice from '../../components/invoices/createOrderInvoice';
 import { myEntity } from '../../Shared/Services/userServices';
 import { getMyDrugAmount, tansferTO, transfer } from '../../Shared/Services/TransactionServices';
 import { useUser } from '../../Shared/contexts/userContext';
+import Swal from 'sweetalert2';
+import AlertService from '../../notificationService';
 
 const request = {
   invoiceNumber: 'INV-2025-001',
@@ -158,7 +160,7 @@ const CommonTransfer = () => {
 
   const fetchManufacturers = async () => {
     try {
-      const response = await tansferTO({s});
+      const response = await tansferTO({});
       let manufacturersData = [];
       if (response.data) {
         if (Array.isArray(response.data)) {
@@ -170,6 +172,7 @@ const CommonTransfer = () => {
       setManufacturers(manufacturersData);
     } catch (error) {
       console.error('Error fetching manufacturers:', error);
+
     }
   };
 
@@ -236,9 +239,10 @@ const CommonTransfer = () => {
 
       console.log(order)
       transfer(order).resolve(response => {
+        AlertService.success('created tokens!');
 
       }).catch(error => {
-
+        AlertService.error('Failed to create transfer order: ' + error.message);
       });
       //setInvoiceShow({ display: true, order });
     } catch (error) {

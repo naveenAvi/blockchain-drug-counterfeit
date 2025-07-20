@@ -36,7 +36,7 @@ const Login = () => {
 
       //should be addedddd
       if (user.role === 'manufacturer') {
-        navigate('/manufacturer/dashboard');
+        navigate('/manufacture-dashboard');
       } else if (user.role === 'pharmacy') {
         navigate('/pharmacy/dashboard');
       } else if (user.role === 'distributor') {
