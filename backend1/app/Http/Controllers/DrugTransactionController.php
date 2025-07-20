@@ -51,4 +51,6 @@ class DrugTransactionController extends Controller
         $transaction->update($request->all());
         return response()->json($transaction, 200);
     }
+
+    
 }

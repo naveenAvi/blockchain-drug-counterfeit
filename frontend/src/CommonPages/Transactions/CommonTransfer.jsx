@@ -5,7 +5,8 @@ import { getDrugs } from '../../Shared/Services/DrugService';
 import { getManufacturers } from '../../Shared/Services/manufacturerServices';
 import CreateOrderInvoice from '../../components/invoices/createOrderInvoice';
 import { myEntity } from '../../Shared/Services/userServices';
-import { getMyDrugAmount } from '../../Shared/Services/TransactionServices';
+import { getMyDrugAmount, tansferTO, transfer } from '../../Shared/Services/TransactionServices';
+import { useUser } from '../../Shared/contexts/userContext';
 
 const request = {
   invoiceNumber: 'INV-2025-001',
@@ -67,7 +68,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, searchKey = '
 
   return (
     <div className="searchable-select position-relative">
-      <div 
+      <div
         className={`form-control d-flex justify-content-between align-items-center ${error ? 'is-invalid' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
         style={{ cursor: 'pointer', minHeight: '38px' }}
@@ -77,7 +78,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, searchKey = '
         </span>
         <i className={`fas fa-chevron-${isOpen ? 'up' : 'down'}`}></i>
       </div>
-      
+
       {isOpen && (
         <div className="dropdown-menu show w-100 shadow-lg border-0 mt-1" style={{ zIndex: 1050 }}>
           <div className="p-2 border-bottom">
@@ -111,7 +112,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, searchKey = '
           </div>
         </div>
       )}
-      
+
       {error && <div className="invalid-feedback d-block">{error}</div>}
     </div>
   );
@@ -129,9 +130,10 @@ const CommonTransfer = () => {
   const [manufacturerId, setManufacturerId] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [referenceDoc, setReferenceDoc] = useState(null);
-  const [amount, setAmount] = useState(''); 
+  const [amount, setAmount] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const { user } = useUser();
 
   const selectedDrug = drugs.find(d => d.id === parseInt(selectedDrugId));
 
@@ -156,7 +158,7 @@ const CommonTransfer = () => {
 
   const fetchManufacturers = async () => {
     try {
-      const response = await getManufacturers();
+      const response = await tansferTO({s});
       let manufacturersData = [];
       if (response.data) {
         if (Array.isArray(response.data)) {
@@ -174,7 +176,7 @@ const CommonTransfer = () => {
   const fetchDrugBalance = async () => {
     if (!selectedDrugId) return;
     try {
-      const response = await getMyDrugAmount(selectedDrugId);
+      const response = await getMyDrugAmount({ drug_id: selectedDrug.drug_id, id: selectedDrug.id, entID: user.entID });
       setWalletAmount(response.data);
     } catch (error) {
       console.error('Error fetching drug balance:', error);
@@ -203,12 +205,12 @@ const CommonTransfer = () => {
     if (!manufacturerId) newErrors.manufacturer = "Please select a manufacturer";
     if (!invoiceNumber.trim()) newErrors.invoice = "Invoice number is required";
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) newErrors.amount = "Please enter a valid amount";
-    
+
     // Check if amount exceeds available balance
     if (walletAmount?.avail_amount && parseFloat(amount) > parseFloat(walletAmount.avail_amount)) {
       newErrors.amount = "Amount exceeds available balance";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -216,13 +218,13 @@ const CommonTransfer = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    
+
     setLoading(true);
     try {
       const order = {
-        drugId: selectedDrugId,
+        drugId: selectedDrug.drug_id,
         drug: selectedDrug,
-        manufacturer: manufacturers.find(m => m.id === parseInt(manufacturerId)),
+        toParty: manufacturers.find(m => m.id === parseInt(manufacturerId))?.entID,
         type: drugType,
         dosage,
         manufacturerId,
@@ -232,7 +234,13 @@ const CommonTransfer = () => {
         fromParty
       };
 
-      setInvoiceShow({ display: true, order });
+      console.log(order)
+      transfer(order).resolve(response => {
+
+      }).catch(error => {
+
+      });
+      //setInvoiceShow({ display: true, order });
     } catch (error) {
       console.error('Error creating order:', error);
     } finally {
@@ -267,8 +275,8 @@ const CommonTransfer = () => {
                 <p className="text-muted mb-0">Transfer pharmaceutical tokens between entities</p>
               </div>
               <div className="col-auto">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-outline-primary btn-sm"
                   onClick={resetForm}
                 >
@@ -334,10 +342,10 @@ const CommonTransfer = () => {
                           <i className="fas fa-file-invoice me-1 text-primary"></i>
                           Invoice Number <span className="text-danger">*</span>
                         </label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className={`form-control ${errors.invoice ? 'is-invalid' : ''}`}
-                          value={invoiceNumber} 
+                          value={invoiceNumber}
                           onChange={(e) => setInvoiceNumber(e.target.value)}
                           placeholder="Enter invoice number"
                         />
@@ -351,10 +359,10 @@ const CommonTransfer = () => {
                           Amount <span className="text-danger">*</span>
                         </label>
                         <div className="input-group">
-                          <input 
-                            type="number" 
+                          <input
+                            type="number"
                             className={`form-control ${errors.amount ? 'is-invalid' : ''}`}
-                            value={amount} 
+                            value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             placeholder="Enter amount"
                             min="0"
@@ -379,8 +387,8 @@ const CommonTransfer = () => {
                           Reference Document (Invoice/Permit)
                         </label>
                         <div className="input-group">
-                          <input 
-                            type="file" 
+                          <input
+                            type="file"
                             className={`form-control ${errors.reference ? 'is-invalid' : ''}`}
                             accept=".pdf,.jpg,.jpeg,.png"
                             onChange={(e) => setReferenceDoc(e.target.files[0])}
@@ -475,16 +483,16 @@ const CommonTransfer = () => {
                     </small>
                   </div>
                   <div className="btn-group">
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="btn btn-outline-secondary"
                       onClick={resetForm}
                     >
                       <i className="fas fa-times me-1"></i>
                       Cancel
                     </button>
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="btn btn-primary"
                       disabled={loading}
                     >
@@ -508,10 +516,10 @@ const CommonTransfer = () => {
         </div>
       </div>
 
-      <CreateOrderInvoice 
-        request={request} 
-        order={invoiceShow} 
-        onClose={setInvoiceShow} 
+      <CreateOrderInvoice
+        request={request}
+        order={invoiceShow}
+        onClose={setInvoiceShow}
       />
 
       <style jsx>{`

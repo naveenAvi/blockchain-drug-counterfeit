@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Mail\CorpUserWelcomeMail;
+use App\Models\ConnectedEntity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -21,6 +22,16 @@ class userController extends Controller
             'designation'   => 'nullable|string|max:255',
             'entID'         => 'required|exists:connectedEntities,entID',
         ]);
+
+        $entity = ConnectedEntity::where(["entID" => $validated['entID']])->first();
+        if(!$entity) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Entity not found.',
+            ], 404);
+        }
+
+        
  
         $plainPassword = Str::random(10);
 
@@ -29,6 +40,7 @@ class userController extends Controller
             'email'         => $validated['email'],
             'designation'   => $validated['designation'] ?? '',
             'entID'         => $validated['entID'],
+            'role'          => $entity->type,
             // 'password'      => Hash::make($plainPassword),
             'password'      => Hash::make('1234'),
         ]);

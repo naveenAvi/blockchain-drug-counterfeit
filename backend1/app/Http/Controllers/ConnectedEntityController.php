@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ConnectedEntity;
+use App\Models\EntityCredentials;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Http;
+use Illuminate\Support\Str;
 
 use function Pest\Laravel\json;
 
@@ -60,18 +63,66 @@ class ConnectedEntityController extends Controller
 
         $count = ConnectedEntity::where('type', $validated['type'])->count() + 1;
 
+
+
         $entID = $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
         $validated['entID'] = $entID;
 
         $validated['is_active'] = 1;
+        $password = Str::random(12);
 
+
+        if(ConnectedEntity::where('name', $validated['name'])->first()){
+            return response()->json([
+                'success' => false,
+                'message' => 'Entity with this name already exists.',
+                'data' => $validated
+            ], 400);
+        }
         $entity = ConnectedEntity::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Entity created successfully.',
-            'data' => $entity
-        ], 201);
+        try {
+            $response = Http::post('http://20.193.133.149:3000/api/register', [
+                'username' => $validated['name'],
+                'org' => 'Org1',
+                'role' => $validated['type'],
+                'password' => $password
+            ]);
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+                $validated['secret'] = $responseData['secret'] ?? null;
+
+                EntityCredentials::create([
+                    'entityID' => $entID,
+                    'certificate_path' =>  null,
+                    'private_key_path' =>  null,
+                    'username' => $validated['name'] . "." . $prefix,
+                    'pasword' => $password,
+                    'secret' => $validated['secret'],
+                    'is_active' => true
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Entity created successfully.',
+                    'data' => $entity
+                ], 201);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Entity created but failed to register with fabric server.',
+                    'data' => $validated,
+                    'fabric_error' => $response->body()
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Entity created but encountered an error contacting fabric server.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 

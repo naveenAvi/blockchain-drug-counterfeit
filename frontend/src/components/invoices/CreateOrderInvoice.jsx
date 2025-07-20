@@ -30,6 +30,7 @@ const CreateOrderInvoice = ({ order, onClose, request }) => {
             status: "pending",
             total_amount: parseInt(order.order.amount),
             notes: "", 
+            drugid: order.order.drug.id,
             };
 
         createOrder(payload)
@@ -49,7 +50,7 @@ const CreateOrderInvoice = ({ order, onClose, request }) => {
 
     return (
         <>
-            <Modal show={order?.display} onHide={onClose} size="lg" centered>
+            <Modal show={order?.display}  size="lg" centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Invoice Preview</Modal.Title>
                 </Modal.Header>

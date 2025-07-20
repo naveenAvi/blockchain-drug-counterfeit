@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ImporterOrder;
+use App\Models\ManufacturerOrder;
 use Illuminate\Http\Request;
 
 class ImporterOrdersController extends Controller
@@ -55,9 +56,12 @@ class ImporterOrdersController extends Controller
             'status' => 'in:pending,approved,rejected,shipped,delivered',
             'total_amount' => 'required|integer',
             'notes' => 'nullable|string',
+            "drugid" => 'required|integer',
         ]);
 
         $order = ImporterOrder::create($validated);
+        $validated['importerOrderID']= $order->id;
+        $order = ManufacturerOrder::create($validated);
 
         return response()->json($order, 201);
     }
