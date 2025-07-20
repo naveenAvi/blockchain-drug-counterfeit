@@ -15,6 +15,9 @@ Route::get('/k', function () {
 });
 
 Route::get('/entities', [ConnectedEntityController::class, 'index']);
+Route::get('/entities/filterby/{type}', [ConnectedEntityController::class, 'indexFIlterByTpe']);
+
+
 Route::get('/entities/{id}', [ConnectedEntityController::class, 'show']);
 Route::get('/entities/{entity}/users', [ConnectedEntityController::class, 'users_show']);
 

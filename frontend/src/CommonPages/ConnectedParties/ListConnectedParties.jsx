@@ -17,7 +17,7 @@ const ListConnectedParties = () => {
     const fetchEntities = async () => {
         setLoading(true);
         try {
-            const res = await getEntities();
+            const res = await getEntities(entityType);
             if (res.data.success) {
                 setEntities(res.data.data);
             } else {
