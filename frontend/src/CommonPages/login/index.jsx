@@ -41,6 +41,9 @@ const Login = () => {
         navigate('/pharmacy/dashboard');
       } else if (user.role === 'distributor') {
         navigate('/distributor/dashboard');
+      } else if (user.role === 'distributor') {
+        navigate('/importer-dashboard');
+        
       } else {
         navigate('/user/dashboard');
       }

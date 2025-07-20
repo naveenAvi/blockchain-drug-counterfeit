@@ -42,7 +42,11 @@ const OrderList = () => {
   }, [])
 
 
-
+  const statusColors = {
+    approved: '#28a745',
+    Rejected: '#dc3545',
+    pending: '#ffc107',
+  };
   const columns = [
     {
       title: "Drug Name",
@@ -77,18 +81,28 @@ const OrderList = () => {
     {
       title: "Status",
       dataIndex: "status",
-      render: (text) => (
-        <span
-          className={`badge bg-${text === "approved"
-              ? "success"
-              : text === "Rejected"
-                ? "danger"
-                : "warning"
-            }`}
-        >
-          {text}
-        </span>
-      ),
+      render: (text) => {
+        const color = statusColors[text] || '#ffc107';
+
+        return (
+          <span
+            className="badge"
+            style={{
+              backgroundColor: color,
+              color: '#fff',
+              padding: '0.25em 0.6em',
+              fontWeight: '600',
+              borderRadius: '0.25rem',
+              textTransform: 'capitalize',
+              display: 'inline-block',
+              minWidth: '80px',
+              textAlign: 'center',
+            }}
+          >
+            {text}
+          </span>
+        );
+      },
     },
     {
       title: "Actions",
