@@ -8,6 +8,7 @@ import { plusicon, refreshicon, searchnormal, pdficon, pdficon3, pdficon4, image
 import { Link } from 'react-router-dom';
 import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
 import { getorderList } from '../../Shared/Services/ImporterServices';
+import QRModal from '../../components/QRModal';
 
 const OrderList = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -128,6 +129,8 @@ const OrderList = () => {
             </div>
           </div>
 
+
+          <QRModal />
           <div className="row">
             <div className="col-sm-12">
               <div className="card card-table">
@@ -155,7 +158,7 @@ const OrderList = () => {
                     </div>
                   </div>
 
-                  <div className="table-responsive">
+                  <div className="table-responsive p-4">
                     <Table
                       pagination={{
                         total: datasource.length,

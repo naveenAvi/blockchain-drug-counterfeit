@@ -18,7 +18,8 @@ import ViewDrug from "./CommonPages/DrugInventory/ViewDrug/ViewDrug";
 import LoggedInUserLayout from "./Shared/Layout/LoggedInUserLayout";
 import AdminOrdersList from "./CommonPages/AdminApprovals/AdminOrdersList";
 import OrderListView from "./CommonPages/Approvals/OrderListView";
-
+import ManufactureDashboard from "./CommonPages/Dashboard/ManufactureDashboard";
+import DistributorDashboard from "./CommonPages/Dashboard/DistributorDashboard";
 import CommonTransfer from "./CommonPages/Transactions/CommonTransfer";
 import TransactionHistory from "./CommonPages/Transactions/TransactionHistory";
 import CreateUsers from "./CommonPages/userManagement/CreateUsers";
@@ -74,11 +75,10 @@ const Approuter = () => {
 
           
 
-        
-
-            
-
+      
             <Route path="/transfer-tokens" element={<CommonTransfer />} />
+            <Route path="/manufacture-dashboard" element={<ManufactureDashboard />} />
+            <Route path="/distributor-dashboard" element={<DistributorDashboard />} />
 
             <Route path="/pos" element={<PosScreen />} />
           </Route>

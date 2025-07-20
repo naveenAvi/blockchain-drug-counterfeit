@@ -41,7 +41,7 @@ const DrugInventory = () => {
                                                 <FeatherIcon icon="chevron-right" />
                                             </i>
                                         </li>
-                                        <li className="breadcrumb-item active">Drugs List</li>
+                                        <li className="breadcrumb-item active">Drug List</li>
                                     </ul>
                                 </div>
                             </div>

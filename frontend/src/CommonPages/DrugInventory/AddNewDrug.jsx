@@ -3,6 +3,8 @@ import Header from '../Header';
 import Sidebar from '../Sidebar';
 import TextEditor from '../TextEditor';
 import { postData } from '../../api';
+import notificationService from '../../notificationService';
+import Swal from 'sweetalert2';
 
 const drugTypes = [
   { value: 'tablet', label: 'Tablet' },
@@ -97,34 +99,44 @@ const AddNewDrug = () => {
     try {
       setLoading(true);
       const response = await postData('/drugs', formData);
-      console.log(response);
-      alert('Drug definition submitted successfully!');
+      Swal.fire({
+      icon: 'success',
+      title: 'Success',
+      text: 'Drug definition submitted successfully!',
+      });
       setFormData({
-        name: '',
-        type: '',
-        dosages: [],
-        specifications: '',
-        image: null,
-        drugId: '',
-        activeIngredients: '',
-        excipients: '',
-        strength: '',
-        dosageForm: '',
-        routeOfAdministration: '',
-        packagingType: '',
-        packSize: '',
-        storageConditions: '',
-        shelfLife: '',
-        gs1Gtin: '',
-        regulatoryApprovalRegion: '',
-        nationalDrugCode: '',
-        marketingAuthorizationHolder: '',
-        controlledSubstanceSchedule: '',
+      name: '',
+      type: '',
+      dosages: [],
+      specifications: '',
+      image: null,
+      drugId: '',
+      activeIngredients: '',
+      excipients: '',
+      strength: '',
+      dosageForm: '',
+      routeOfAdministration: '',
+      packagingType: '',
+      packSize: '',
+      storageConditions: '',
+      shelfLife: '',
+      gs1Gtin: '',
+      regulatoryApprovalRegion: '',
+      nationalDrugCode: '',
+      marketingAuthorizationHolder: '',
+      controlledSubstanceSchedule: '',
       });
       setErrors({});
       setNewDosage({ value: '', unit: 'ml' });
     } catch (error) {
-      alert('Failed to submit drug definition. Please try again.');
+      Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Failed to submit drug definition. Please try again.',
+      });
+      
+      setErrors({});
+      setNewDosage({ value: '', unit: 'ml' });
       console.error('API error:', error);
     } finally {
       setLoading(false);
