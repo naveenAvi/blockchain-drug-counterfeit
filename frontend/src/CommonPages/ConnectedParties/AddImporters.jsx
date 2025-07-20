@@ -18,6 +18,7 @@ const AddImporters = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // Spinner state
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -47,7 +48,13 @@ const AddImporters = () => {
 
     console.log("Importer Data Submitted:", formData);
     // Send to blockchain or backend API here
+    setLoading(true); // Start loading
+    setTimeout(() => {
+      console.log("Importer Data Submitted:", formData);
+      setLoading(false);
+    }, 2000);
   };
+
 
   return (
     <div className="main-wrapper">
@@ -132,9 +139,16 @@ const AddImporters = () => {
                   </div>
                 </div>
 
-                <div className="col-12 text-end">
-                  <button type="submit" className="btn btn-primary">Register Importer</button>
-                </div>
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading && (
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                  )}
+                  {loading ? 'Submitting...' : 'Register Importer'}
+                </button>
 
               </div>
             </div>

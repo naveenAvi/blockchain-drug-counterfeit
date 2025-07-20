@@ -129,7 +129,7 @@ const ListConnectedParties = () => {
                                         </div>
                                     </div>
 
-                                    <div className="table-responsive">
+                                    <div className="table-responsive p-3">
                                         {loading ? (
                                             <div className="text-center py-5"><Spin size="large" /></div>
                                         ) : (

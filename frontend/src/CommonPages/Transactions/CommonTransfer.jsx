@@ -414,7 +414,7 @@ const CommonTransfer = () => {
                 {selectedDrug && (
                   <div className="card shadow-sm border-0 h-100">
                     <div className="card-header bg-primary text-white">
-                      <h5 className="card-title mb-0">
+                      <h5 className="card-title mb-0 text-white">
                         <i className="fas fa-info-circle me-2"></i>
                         Drug Information
                       </h5>
@@ -579,7 +579,7 @@ const CommonTransfer = () => {
         }
         
         .bg-primary-subtle {
-          background-color: rgba(13, 110, 253, 0.1) !important;
+          background-color: rgba(172, 205, 255, 0.1) !important;
         }
       `}</style>
     </div>
