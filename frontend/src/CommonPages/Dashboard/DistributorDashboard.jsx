@@ -124,7 +124,7 @@ const DistributorDashboard = () => {
                                 {/* Dashboard Cards */}
                                 <div className="row mb-4">
                                     <div className="col-md-3">
-                                        <div className="card text-white bg-primary mb-3">
+                                        <div className="card  mb-3" style={{ backgroundColor: '#e6f0ff' }}>
                                             <div className="card-body">
                                                 <h5 className="card-title">Total Orders</h5>
                                                 <p className="card-text fs-3 fw-bold">120</p>
@@ -132,7 +132,7 @@ const DistributorDashboard = () => {
                                         </div>
                                     </div>
                                     <div className="col-md-3">
-                                        <div className="card text-white bg-warning mb-3">
+                                        <div className="card  mb-3" style={{ backgroundColor: '#fff9e6' }}>
                                             <div className="card-body">
                                                 <h5 className="card-title">Processing</h5>
                                                 <p className="card-text fs-3 fw-bold">35</p>
@@ -140,7 +140,7 @@ const DistributorDashboard = () => {
                                         </div>
                                     </div>
                                     <div className="col-md-3">
-                                        <div className="card text-white bg-success mb-3">
+                                        <div className="card  mb-3" style={{ backgroundColor: '#e6ffe6' }}>
                                             <div className="card-body">
                                                 <h5 className="card-title">Delivered</h5>
                                                 <p className="card-text fs-3 fw-bold">70</p>
@@ -148,7 +148,7 @@ const DistributorDashboard = () => {
                                         </div>
                                     </div>
                                     <div className="col-md-3">
-                                        <div className="card text-white bg-danger mb-3">
+                                        <div className="card  mb-3" style={{ backgroundColor: '#ffe6e6' }}>
                                             <div className="card-body">
                                                 <h5 className="card-title">Cancelled</h5>
                                                 <p className="card-text fs-3 fw-bold">15</p>
