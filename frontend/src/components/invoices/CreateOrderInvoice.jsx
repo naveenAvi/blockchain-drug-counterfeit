@@ -1,6 +1,7 @@
 import { Modal } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import { createOrder } from '../../Shared/Services/ImporterServices';
+import AlertService from '../../notificationService';
 
 const CreateOrderInvoice = ({ order, onClose, request }) => {
   const [rejectLoading, setRejectLoading] = useState(false);
@@ -36,38 +37,17 @@ const CreateOrderInvoice = ({ order, onClose, request }) => {
 
     try {
       await createOrder(payload);
-      alert('Order created successfully!');
-      onClose?.(); // Close modal if onClose prop exists
+      AlertService.success("created the Order")
+      onClose({display:false,order: {} })
     } catch (error) {
-      console.error(error);
-      alert('Failed to create order.');
+      AlertService.error("failed to create the Order")
     } finally {
       setRequestLoading(false);
     }
   };
 
   const handleReject = async () => {
-    const reason = window.prompt('Enter rejection reason:');
-    if (!reason || !reason.trim()) {
-      // User cancelled or entered empty reason
-      return;
-    }
-
-    setRejectLoading(true);
-
-    try {
-      // TODO: Replace this with actual API call to submit rejection reason
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      console.log('Rejected:', reason);
-      alert('Request rejected successfully!');
-      onClose?.();
-    } catch (error) {
-      console.error(error);
-      alert('Failed to reject request.');
-    } finally {
-      setRejectLoading(false);
-    }
+    onClose({display:false,order: {} })
   };
 
   return (
