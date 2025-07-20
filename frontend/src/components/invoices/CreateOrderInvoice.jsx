@@ -4,34 +4,36 @@ import { createOrder } from '../../Shared/Services/ImporterServices';
 import AlertService from '../../notificationService';
 
 const CreateOrderInvoice = ({ order, onClose, request }) => {
-    const [showRejectModal, setShowRejectModal] = useState(false);
-    const [rejectReason, setRejectReason] = useState('');
-    const [drugDetails, setdrugDetails] = useState({});
-    const [fromParty, setfromParty] = useState({});
   const [rejectLoading, setRejectLoading] = useState(false);
   const [requestLoading, setRequestLoading] = useState(false);
   const [drugDetails, setdrugDetails] = useState({});
   const [fromParty, setfromParty] = useState({});
+  const [issueDate, setIssueDate] = useState('');
 
-    useEffect(() => {
-        let importer = null;
-        try {
-            const userStr = localStorage.getItem('user');
-            if (userStr) {
-                const userObj = JSON.parse(userStr);
-                if (userObj.role === 'importer') {
-                    importer = userObj;
-                }
-            }
-        } catch (e) {
-            importer = null;
+  useEffect(() => {
+    let importer = null;
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const userObj = JSON.parse(userStr);
+        if (userObj.role === 'importer') {
+          importer = userObj;
         }
-        if (order) {
-            setdrugDetails(order.order.drug);
-            // Use importer from localStorage if available, else fallback to order.order.fromParty
-            setfromParty(importer || order.order.fromParty);
-        }
-    }, [order]);
+      }
+    } catch (e) {
+      importer = null;
+    }
+    setfromParty(importer || {});
+    if (order) {
+      setdrugDetails(order.order.drug);
+    }
+    setIssueDate(new Date().toLocaleDateString());
+  }, [order]);
+
+  const truncateText = (text, maxLength = 150) => {
+    if (!text) return '';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  };
 
   const handleRequestTokens = async () => {
     setRequestLoading(true);
@@ -39,7 +41,7 @@ const CreateOrderInvoice = ({ order, onClose, request }) => {
       invoice_number: "11",
       reference_document: null,
       manufacturer_id: parseInt(order.order.manufacturerId),
-      importer_id: order.order.fromParty?.id,
+      importer_id: fromParty?.id,
       order_date: new Date().toISOString().split('T')[0],
       status: "pending",
       total_amount: parseInt(order.order.amount),
@@ -77,14 +79,11 @@ const CreateOrderInvoice = ({ order, onClose, request }) => {
                     {/* Header */}
                     <div className="row mb-4">
                       <div className="col-md-6">
-                        <img src={'fgyhfgh'} alt="logo" style={{ height: 40 }} />
                         <h4 className="mt-2">Request Details</h4>
                         <p><strong>Invoice No:</strong> {request.invoiceNumber}</p>
                       </div>
                       <div className="col-md-6 text-md-end">
-                        <p><strong>Issue Date:</strong> {request.issueDate}</p>
-                        <p><strong>Due Date:</strong> {request.dueDate}</p>
-                        <p><strong>Due Amount:</strong> {request.dueAmount}</p>
+                        <p><strong>Issue Date:</strong> {issueDate}</p>
                       </div>
                     </div>
 
@@ -93,10 +92,11 @@ const CreateOrderInvoice = ({ order, onClose, request }) => {
                       <div className="col-md-6">
                         <h6>From (Importer)</h6>
                         <p>
-                          {fromParty?.name}.<br />
-                          {truncateText(fromParty?.address, 150)},<br />
-                          {fromParty?.country}.<br />
-                          {fromParty?.contact}
+                          ID: {fromParty?.id || '-'}<br />
+                          {fromParty?.name}<br />
+                          {fromParty?.address && <>{fromParty.address},<br /></>}
+                          {fromParty?.country && <>{fromParty.country}.<br /></>}
+                          {fromParty?.contact || fromParty?.email}
                         </p>
                       </div>
                       <div className="col-md-6">
@@ -136,12 +136,6 @@ const CreateOrderInvoice = ({ order, onClose, request }) => {
                     <div className="row">
                       <div className="col-md-6">
                         <p><strong>Reference Document:</strong> {request.invoiceNumber}</p>
-                      </div>
-                      <div className="col-md-6 text-end">
-                        <p>Tax: <strong>{request.tax}</strong></p>
-                        <p>Extra Charges: <strong>{request.extra}</strong></p>
-                        <p>Discount: <strong>{request.discountTotal}</strong></p>
-                        <h5>Total: <strong>{request.finalTotal}</strong></h5>
                       </div>
                     </div>
 
