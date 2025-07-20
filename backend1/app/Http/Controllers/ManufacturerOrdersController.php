@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\ManufacturerOrder;
 use App\Models\ConnectedEntity;
 use App\Models\EntityCredentials;
+use App\Models\ImporterOrder;
 use App\Services\FabricAuthService;
 use App\Models\local_drug_wallet;
+use App\Models\corp_transactions;
 use Http;
 use Auth;
 
@@ -129,7 +131,14 @@ class ManufacturerOrdersController extends Controller
 
 
         $login = $fabricAuth->login($manuUsername, $connectedEntity->type, 'Org1', $credentials->pasword);
-
+        if(!$login['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Fabric login failed',
+                'error' => $login['message'] ?? 'Unknown error'
+            ], 500);
+        }
+        
         $token = $login['token'];
 
         if (!$login['success']) {
@@ -158,6 +167,18 @@ class ManufacturerOrdersController extends Controller
 
             ManufacturerOrder::where(['manufacturer_id'=>$connectedEntity->id, 'order_number'=>$orderid])->update([
                 'status' => 'created'
+            ]);
+            ImporterOrder::where(['manufacturer_id'=>$connectedEntity->id, 'id'=>$orderid])->update([
+                'status' => 'approved'
+            ]);
+
+            corp_transactions::create([
+                'drugid' => $payload["drugId"],
+                'fromEntID' => $connectedEntity->entID,
+                'toEntID' => $connectedEntity->entID,
+                'amount' => $payload['amount'],
+                'status' => "created",
+                "referenceNo" => $responseData['assetID'] ?? null
             ]);
 
             $wallet = local_drug_wallet::where('drugid', $payload["drugId"])

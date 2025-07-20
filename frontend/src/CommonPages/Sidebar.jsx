@@ -66,22 +66,7 @@ const Sidebar = (props) => {
             >
               <ul>
                 <li className="menu-title">Main</li>
-                <li className="submenu" >
-                  <Link to="#" id="menu-item" onClick={(e) => {
-
-                    handleClick(e, "menu-item", "menu-items")
-                  }}>
-                    <span className="menu-side">
-                      <img src={dashboard} alt="" />
-                    </span>{" "}
-                    <span> Dashboard </span> <span className="menu-arrow" />
-                  </Link>
-                  <ul style={{ display: sidebar === 'Dashboard' ? 'block' : "none" }} className='menu-items'>
-                    <li>
-                      <Link className={props?.activeClassName === 'Manufacturer-dashboard' ? 'active' : ''} to="/Manufacturer-dashboard">Manufacturer Dashboard</Link>
-                    </li>
-                  </ul>
-                </li>
+                
 
 
 
