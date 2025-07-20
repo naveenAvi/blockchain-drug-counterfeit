@@ -73,10 +73,8 @@ const Login = () => {
               <div className="loginbox">
                 <div className="login-right">
                   <div className="login-right-wrap">
-                    <div className="account-logo">
-                      <Link to="/">
-                        <img src={loginlogo} alt="Logo" />
-                      </Link>
+                    <div className="account-logo text-center mb-3">
+                      <span style={{ color: '#007bff', fontWeight: 'bold', fontSize: '2rem', letterSpacing: '1px' }}>PharmaTrust</span>
                     </div>
                     <h2>Login</h2>
 
@@ -124,7 +122,7 @@ const Login = () => {
 
                     <div className="next-sign">
                       <p className="account-subtitle">
-                        Need an account? <Link to="/signup">Sign Up</Link>
+                        Need an account? <Link to="/register">Sign Up</Link>
                       </p>
                       <div className="social-login">
                         <Link to="#"><img src={loginicon01} alt="#" /></Link>

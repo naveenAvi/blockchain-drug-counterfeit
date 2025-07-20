@@ -548,7 +548,7 @@ const CreateOrder = () => {
         </div>
       </div>
 
-      <CreateOrderInvoice 
+    />  <CreateOrhderInvoice 
         request={request} 
         order={invoiceShow} 
         onClose={setInvoiceShow} 

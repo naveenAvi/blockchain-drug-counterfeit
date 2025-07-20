@@ -23,6 +23,7 @@ const PosScreen = () => {
                                 <div className="card chat-box ">
                                     <div className="chat-widgets">
                                         <div className="call-all comman-space-flex">
+                                        
 
                                         </div>
                                         <div className="chat-user-group d-flex align-items-center">

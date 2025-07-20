@@ -37,6 +37,13 @@ const Header = () => {
     }
   };
 
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "/login";
+  };
+
   useEffect(() => {
     const handleClick = () => {
       if (!document.fullscreenElement) {
@@ -61,7 +68,7 @@ const Header = () => {
         <div className="header-left">
           <Link to="/admin-dashboard" className="logo">
             <img src={logo} width={35} height={35} alt="" />{" "}
-            <span>Block chain</span>
+            <span>PharmaTrust</span>
           </Link>
         </div>
         <Link id="toggle_btn" to="#" onClick={handlesidebar}>
@@ -115,7 +122,7 @@ const Header = () => {
             </div>
           </li>
           <li className="nav-item ">
-            <Link to="/settings" className="hasnotifications nav-link">
+            <Link to="/settings" className="hasnotifications nav-link" onClick={handleLogout}>
               <img src={settingicon01} alt="" />{" "}
             </Link>
           </li>

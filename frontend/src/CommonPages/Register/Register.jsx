@@ -73,10 +73,8 @@ const Register = () => {
               <div className="loginbox">
                 <div className="login-right">
                   <div className="login-right-wrap">
-                    <div className="account-logo">
-                      <Link to="/">
-                        <img src={loginlogo} alt="Logo" />
-                      </Link>
+                    <div className="account-logo text-center mb-3">
+                      <span style={{ color: '#007bff', fontWeight: 'bold', fontSize: '2rem', letterSpacing: '1px' }}>PharmaTrust</span>
                     </div>
                     <h2>Register</h2>
 
