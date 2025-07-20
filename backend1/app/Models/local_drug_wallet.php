@@ -15,6 +15,7 @@ class local_drug_wallet extends Model
 
     protected $fillable = [
         'drugid',
+        "assetsID",
         'entID',
         'ownerID',
         'avail_amount',

@@ -59,6 +59,7 @@
     "react-stars": "^2.2.5",
     "react-tag-input-component": "^2.0.2",
     "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.22.2",
     "util": "^0.12.5",
     "weather-icons-react": "^1.2.0",
     "yet-another-react-lightbox": "^3.23.4"

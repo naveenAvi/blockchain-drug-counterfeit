@@ -4,6 +4,7 @@ use App\Http\Controllers\userController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConnectedEntityController;
+use App\Http\Controllers\ManufacturerOrdersController;
 use App\Http\Controllers\DrugController;
 use App\Http\Controllers\DrugTransactionController;
 use App\Http\Controllers\ImporterOrdersController;
@@ -34,7 +35,7 @@ Route::post('/register', [userController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/transaction-history', [DrugTransactionController::class, 'index']);
-Route::post('/create-user', [userController::class, 'corp_store']);
+Route::post('/corp_store', [userController::class, 'corp_store']);
 
 Route::post('/order-history', [ImporterOrdersController::class, 'shows']);
 
@@ -49,10 +50,13 @@ Route::post('/order-history', [ImporterOrdersController::class, 'shows']);
 
 Route::middleware(['auth:sanctum', 'role:manufacturer'])->group(function () {
     // my orders list, ordered by me
-    Route::post('/manufcaturer/list-orders', [DrugController::class, 'destroy']);
+    Route::post('/manufacturer/list-orders', [ManufacturerOrdersController::class, 'show']);
+    Route::post('/manufacturer/status-update', [ManufacturerOrdersController::class, 'statusUpdate']);
 
-    Route::post('/manufcaturer/create-order', [DrugController::class, 'destroy']);
-    Route::post('/manufcaturer/cancel-order', [DrugController::class, 'destroy']);
+    
+
+    Route::post('/manufacturer/create-order', [DrugController::class, 'destroy']);
+    Route::post('/manufacturer/cancel-order', [DrugController::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum','role:importer'])->group(function () {
@@ -75,6 +79,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/importer/get-importer-orderss', [ImporterOrdersController::class, 'showimportDetails']);
 
     Route::post('/my/drug-amount/{drugid}', [DrugWalletController::class, 'showByDrugId']);
+    Route::post('/my/transfer', [DrugWalletController::class, 'handleTransaction']);
+    Route::post('/my/tansferTO', [DrugWalletController::class, 'getToEntities']);
     
 
 });

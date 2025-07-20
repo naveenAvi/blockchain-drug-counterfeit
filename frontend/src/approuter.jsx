@@ -25,6 +25,10 @@ import TransactionHistory from "./CommonPages/Transactions/TransactionHistory";
 import CreateUsers from "./CommonPages/userManagement/CreateUsers";
 import Register from "./CommonPages/Register/Register";
 import OrderHistory from "./CommonPages/SendDrug/OrderHistory/OrderHistory";
+import ApproveOrder from "./CommonPages/Approvals/ApproveOrder";
+
+import GenarateToken from "./CommonPages/SendDrug/GenarateToken/GenarateToken";
+
 //Accounts
 const Approuter = () => {
   // eslint-disable-next-line no-unused-vars
@@ -63,6 +67,13 @@ const Approuter = () => {
             <Route path="/order-history" element={<OrderHistory />} />
 
             <Route path="/create-user" element={<CreateUsers />} />
+            <Route path="/approve-order" element={<ApproveOrder />} />
+            <Route path="/generate-token" element={<GenarateToken />} />
+
+
+
+
+          
 
       
             <Route path="/transfer-tokens" element={<CommonTransfer />} />

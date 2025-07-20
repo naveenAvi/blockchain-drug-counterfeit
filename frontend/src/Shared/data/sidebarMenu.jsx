@@ -83,7 +83,7 @@ const sidebarMenu = [
       {
         name: "Order List",
         path: "/order-list",
-        allowedRoles: ["admin", "importer"]
+        allowedRoles: ["admin", "importer", "manufacturer"]
       },
 {
         name: "Transfer",

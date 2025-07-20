@@ -14,7 +14,11 @@ return new class extends Migration
          Schema::create('local_drug_wallet', function (Blueprint $table) {
             $table->integer('drug_wallet_id')->autoIncrement();
 
-            $table->integer('drugid')->nullable(false);
+            
+            $table->string('assetsID')->nullable(true);
+
+
+            $table->string('drugid')->nullable(false);
 
             $table->string('entID')->nullable();
             $table->integer('ownerID')->nullable();

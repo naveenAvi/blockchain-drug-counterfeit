@@ -184,7 +184,7 @@ const CreateOrder = () => {
   const validate = () => {
     const newErrors = {};
     if (!selectedDrugId) newErrors.drug = "Please select a drug";
-    if (!drugType) newErrors.drugType = "Please select drug type";
+    // -if (!drugType) newErrors.drugType = "Please select drug type";
     if (!dosage) newErrors.dosage = "Please select dosage";
     if (!manufacturerId) newErrors.manufacturer = "Please select manufacturer";
     if (!invoiceNumber.trim()) newErrors.invoice = "Invoice number is required";
@@ -213,7 +213,7 @@ const CreateOrder = () => {
         fromParty
       };
 
-      setInvoiceShow({ display: true, order });
+       setInvoiceShow({ display: true, order });
     } catch (error) {
       console.error('Error creating order:', error);
     } finally {
@@ -300,7 +300,7 @@ const CreateOrder = () => {
                       </div>
 
                       {/* Drug Type */}
-                      <div className="col-md-6">
+                      {/* <div className="col-md-6">
                         <label className="form-label fw-medium">
                           <i className="fas fa-tablets me-1 text-success"></i>
                           Drug Type <span className="text-danger">*</span>
@@ -317,7 +317,7 @@ const CreateOrder = () => {
                           ))}
                         </select>
                         {errors.drugType && <div className="invalid-feedback">{errors.drugType}</div>}
-                      </div>
+                      </div> */}
 
                       {/* Dosage */}
                       <div className="col-md-6">

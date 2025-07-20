@@ -9,11 +9,14 @@ import { Link } from 'react-router-dom';
 import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
 import { getorderList } from '../../Shared/Services/ImporterServices';
 import QRModal from '../../components/QRModal';
+import { getManuorderList } from '../../Shared/Services/manufacturerServices';
+import { useUser } from '../../Shared/contexts/userContext';
 
 const OrderList = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [datasource, setdatasource] = useState([]);
-  
+  const { user } = useUser();
+
 
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -25,14 +28,22 @@ const OrderList = () => {
   };
 
   useEffect(() => {
-    getorderList().then((response) => {
-      setdatasource(response.data.data);
-    })
+    if (user.role === "manufacturer") {
+      getManuorderList().then((response) => {
+        setdatasource(response.data.data);
+      }).catch((error) => {
+        console.error("Error fetching order list:", error);
+      });
+    } else if (user.role === "importer") {
+      getorderList().then((response) => {
+        setdatasource(response.data.data);
+      })
+    }
   }, [])
-  
-  
 
- const columns = [
+
+
+  const columns = [
     {
       title: "Drug Name",
       dataIndex: "drug_name",
@@ -68,13 +79,12 @@ const OrderList = () => {
       dataIndex: "status",
       render: (text) => (
         <span
-          className={`badge bg-${
-            text === "Approved"
+          className={`badge bg-${text === "Approved"
               ? "success"
               : text === "Rejected"
-              ? "danger"
-              : "warning"
-          }`}
+                ? "danger"
+                : "warning"
+            }`}
         >
           {text}
         </span>

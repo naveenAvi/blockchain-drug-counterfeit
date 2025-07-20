@@ -1,23 +1,42 @@
 import React from 'react';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { confirmAndCreateTokens, getManuorderListByID } from '../../Shared/Services/manufacturerServices';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 const OrderListView = () => {
+  const { orderId } = useParams();
   // For now, hardcode order details
-  const order = {
-    order_number: 'ORD-0005',
-    drug_name: 'Paracetamol',
-    drug_type: 'Tablet',
-    importer_name: 'Importer Pvt Ltd',
-    manufacturer_name: 'Pharma Manufacturer Inc.',
-    invoiceNumber: 'INV-2025-001',
-    amount: '₹38,300',
-    status: 'Approved',
-    date: '2025-06-01',
-    quantity: 10000,
-    dosage: '500mg',
-  };
+  const [order, setOrder] = useState({})
+  // const order = {
+  //   order_number: 'ORD-0005',
+  //   drug_name: 'Paracetamol',
+  //   drug_type: 'Tablet',
+  //   importer_name: 'Importer Pvt Ltd',
+  //   manufacturer_name: 'Pharma Manufacturer Inc.',
+  //   invoiceNumber: 'INV-2025-001',
+  //   amount: '₹38,300',
+  //   status: 'Approved',
+  //   date: '2025-06-01',
+  //   quantity: 10000,
+  //   dosage: '500mg',
+  // };
+
+  useEffect(() => {
+    getManuorderListByID({ orderid: orderId }).then(response => {
+      setOrder(response.data.data[0]);
+    })
+  }, [])
+
+  const confirmcreation = () =>{
+    confirmAndCreateTokens(order).then(response => {
+      console.log("Tokens created successfully", response.data);
+    })
+  }
+
+
 
   return (
     <>
@@ -75,21 +94,21 @@ const OrderListView = () => {
                     <div className="row mb-3">
                       <div className="col-md-6 mb-3">
                         <label className="form-label"><strong>Invoice No.</strong></label>
-                        <input type="text" className="form-control" value={order.invoiceNumber} readOnly />
+                        <input type="text" className="form-control" value={order.invoice_number} readOnly />
                       </div>
                       <div className="col-md-6 mb-3">
                         <label className="form-label"><strong>Amount</strong></label>
-                        <input type="text" className="form-control" value={order.amount} readOnly />
+                        <input type="text" className="form-control" value={order.total_amount} readOnly />
                       </div>
                     </div>
                     <div className="row mb-3">
                       <div className="col-md-6 mb-3">
                         <label className="form-label"><strong>Date</strong></label>
-                        <input type="text" className="form-control" value={order.date} readOnly />
+                        <input type="text" className="form-control" value={order.order_date} readOnly />
                       </div>
                       <div className="col-md-6 mb-3">
                         <label className="form-label"><strong>Quantity</strong></label>
-                        <input type="text" className="form-control" value={order.quantity} readOnly />
+                        <input type="text" className="form-control" value={order.total_amount} readOnly />
                       </div>
                     </div>
                     <div className="row mb-3">
@@ -99,10 +118,20 @@ const OrderListView = () => {
                       </div>
                     </div>
                   </form>
+                  <div>
+                    <div className="modal-footer">
+                      <button className="btn btn-secondary" >cancel</button>
+                      <button className="btn btn-danger" onClick={confirmcreation}>confirm and create tokens</button>
+                    </div>
+                  </div>
                 </div>
+
+
               </div>
             </div>
           </div>
+
+
 
         </div>
       </div>
