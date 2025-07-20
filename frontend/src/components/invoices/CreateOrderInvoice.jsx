@@ -2,48 +2,54 @@ import { Modal } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import { createOrder } from '../../Shared/Services/ImporterServices';
 
-
 const CreateOrderInvoice = ({ order, onClose, request }) => {
-
-    console.log(order)
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectReason, setRejectReason] = useState('');
     const [drugDetails, setdrugDetails] = useState({});
     const [fromParty, setfromParty] = useState({});
 
     useEffect(() => {
-        if (order) {
-            setdrugDetails(order.order.drug)
-            setfromParty(order.order.fromParty)
-            console.log(drugDetails)
+        let importer = null;
+        try {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const userObj = JSON.parse(userStr);
+                if (userObj.role === 'importer') {
+                    importer = userObj;
+                }
+            }
+        } catch (e) {
+            importer = null;
         }
-    }, [order])
-
+        if (order) {
+            setdrugDetails(order.order.drug);
+            // Use importer from localStorage if available, else fallback to order.order.fromParty
+            setfromParty(importer || order.order.fromParty);
+        }
+    }, [order]);
 
     const handleRequestTokens = () => {
         const payload = {
             invoice_number: "11",
             reference_document: null,
             manufacturer_id: parseInt(order.order.manufacturerId),
-            importer_id: order.order.fromParty?.id, 
+            importer_id: fromParty?.id,
             order_date: new Date().toISOString().split('T')[0], 
             status: "pending",
             total_amount: parseInt(order.order.amount),
             notes: "", 
             drugid: order.order.drug.id,
-            };
+        };
 
         createOrder(payload)
             .then(response => {
                 alert('Order created successfully!');
              })
             .catch(error => { })
-
     };
 
     const handleReject = () => {
         if (!rejectReason.trim()) return;
-        console.log('Rejected:', rejectReason);
         setShowRejectModal(false);
         // Send rejection reason to backend or blockchain
     };
@@ -80,10 +86,12 @@ const CreateOrderInvoice = ({ order, onClose, request }) => {
                                         <div className="row mb-4">
                                             <div className="col-md-6">
                                                 <h6>From (Importer)</h6>
-                                                <p>{fromParty?.name}.<br />
-                                                    {fromParty?.address},<br />
-                                                    {fromParty?.country}.<br />
-                                                    {fromParty?.contact}
+                                                <p>
+                                                    ID: {fromParty?.id || '-'}<br />
+                                                    {fromParty?.name}<br />
+                                                    {fromParty?.address && <>{fromParty.address},<br /></>}
+                                                    {fromParty?.country && <>{fromParty.country}.<br /></>}
+                                                    {fromParty?.contact || fromParty?.email}
                                                 </p>
                                             </div>
                                             <div className="col-md-6">

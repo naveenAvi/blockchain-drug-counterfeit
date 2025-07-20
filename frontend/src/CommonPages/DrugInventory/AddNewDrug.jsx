@@ -21,26 +21,25 @@ const routesOfAdministration = ['Oral', 'Topical', 'Intravenous', 'Intramuscular
 
 const AddNewDrug = () => {
   const [formData, setFormData] = useState({
-    name: 'Paracetamol 500mg',
-    type: 'tablet',
-    dosages: ['500 mg', '1000 mg'],
-    specifications: '<p><strong>Description:</strong> Paracetamol is a pain reliever and fever reducer.</p><p><strong>Indications:</strong> For the relief of mild to moderate pain and fever.</p><p><strong>Contraindications:</strong> Hypersensitivity to paracetamol or any of its ingredients.</p>',
+    name: '',
+    type: '',
+    dosages: [],
     image: null,
-    drugId: 'DRG001',
-    activeIngredients: 'Paracetamol (Acetaminophen)',
-    excipients: 'Lactose, Starch, Magnesium Stearate',
-    strength: '500mg',
-    dosageForm: 'Tablet',
-    routeOfAdministration: 'Oral',
-    packagingType: 'Blister Pack',
-    // packSize: '',
-    storageConditions: 'Store below 25°C, Protect from light and moisture',
-    shelfLife: '36 months',
-    gs1Gtin: '01234567890128',
-    regulatoryApprovalRegion: 'Sri Lanka',
-    nationalDrugCode: '0002-1234-56',
-    marketingAuthorizationHolder: 'ABC Pharma Ltd.',
-    controlledSubstanceSchedule: 'Non-controlled',
+    drugId: '',
+    activeIngredients: '',
+    excipients: '',
+    strength: '',
+    dosageForm: '',
+    routeOfAdministration: '',
+    packagingType: '',
+    packSize: '',
+    storageConditions: '',
+    shelfLife: '',
+    gs1Gtin: '',
+    regulatoryApprovalRegion: '',
+    nationalDrugCode: '',
+    marketingAuthorizationHolder: '',
+    controlledSubstanceSchedule: '',
   });
 
   const [newDosage, setNewDosage] = useState({ value: '', unit: 'ml' });
@@ -108,7 +107,6 @@ const AddNewDrug = () => {
       name: '',
       type: '',
       dosages: [],
-      specifications: '',
       image: null,
       drugId: '',
       activeIngredients: '',
@@ -409,16 +407,6 @@ const AddNewDrug = () => {
                       </li>
                     ))}
                   </ul>
-                </div>
-
-                <div className="col-md-12">
-                  <div className="form-group">
-                    <label>Specifications</label>
-                    <TextEditor
-                      value={formData.specifications}
-                      onChange={(value) => setFormData({ ...formData, specifications: value })}
-                    />
-                  </div>
                 </div>
 
                 <div className="col-md-12">
