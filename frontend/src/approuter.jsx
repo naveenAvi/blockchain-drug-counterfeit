@@ -27,6 +27,7 @@ import Register from "./CommonPages/Register/Register";
 import OrderHistory from "./CommonPages/SendDrug/OrderHistory/OrderHistory";
 import ApproveOrder from "./CommonPages/Approvals/ApproveOrder";
 
+
 import GenarateToken from "./CommonPages/SendDrug/GenarateToken/GenarateToken";
 
 //Accounts
@@ -40,7 +41,6 @@ const Approuter = () => {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
 
 
 

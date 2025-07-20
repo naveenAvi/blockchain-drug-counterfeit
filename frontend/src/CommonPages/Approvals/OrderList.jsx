@@ -140,7 +140,7 @@ const OrderList = () => {
           </div>
 
 
-          <QRModal />
+          {/* <QRModal /> */}
           <div className="row">
             <div className="col-sm-12">
               <div className="card card-table">

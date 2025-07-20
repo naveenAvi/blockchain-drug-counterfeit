@@ -5,6 +5,7 @@ import Header from '../../Header';
 import Sidebar from '../../Sidebar';
 import api from '../../../api';
 import { Table } from 'antd';
+import { plusicon, refreshicon, searchnormal, pdficon, pdficon3, pdficon4, imagesend } from '../../imagepath';
 
 
 
@@ -303,7 +304,32 @@ const ViewDrug = () => {
             <div className="col-sm-12">
               <div className="card card-table">
                 <div className="card-body">
+
                   <div style={{ padding: '24px' }}>
+
+                    <div className='d-flex justify-content-between align-items-center mb-3'>
+                      <div className="col">
+                        <h3>Drug List</h3>
+                      </div>
+                      <div className="col-auto text-ends">
+
+                        <div className="top-nav-search">
+                          <form>
+                            <input type="text" className="form-control" placeholder="Search..." />
+                            <button type="submit" className="btn">
+                              <img src={searchnormal} alt="search" />
+                            </button>
+                          </form>
+                        </div>
+                        <div className="add-group ms-2">
+                          <Link to="#" className="btn btn-primary">
+                            <img src={refreshicon} alt="refresh" />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+
+
                     <Table
                       pagination={{
                         total: datasource.length,
@@ -315,7 +341,7 @@ const ViewDrug = () => {
                       rowSelection={rowSelection}
                     />
 
-{/* hello */}
+                    {/* hello */}
 
                     {showViewModal && (
                       <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
