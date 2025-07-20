@@ -67,7 +67,7 @@ const sidebarMenu = [
       },
       {
         name: "Create Importers",
-        path: "/create/importers",
+        path: "/create/importer",
         allowedRoles: ["admin"]
       },
       {

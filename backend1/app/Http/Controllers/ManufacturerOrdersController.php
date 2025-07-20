@@ -239,4 +239,71 @@ class ManufacturerOrdersController extends Controller
 
         return response()->json(['message' => 'Order deleted']);
     }
+
+    public function getDashboardData()
+    {
+        $user = Auth::user();
+        $entID = $user->entID ?? null;
+        if (!$entID) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Authenticated user does not have an entID.'
+            ], 403);
+        }
+        $connectedEntity = ConnectedEntity::where([
+            'entID' => $entID
+        ])->firstOrFail();
+
+        $allOrdersCount = ManufacturerOrder::where('manufacturer_id', $connectedEntity->id)->count();
+        $allOrdersSum = ManufacturerOrder::where('manufacturer_id', $connectedEntity->id)->sum('total_amount');
+
+        $pendingCount = ManufacturerOrder::where([
+            'manufacturer_id'=> $connectedEntity->id,
+            'status' => 'pending'
+        ])->count();
+        $pendingSum = ManufacturerOrder::where([
+            'manufacturer_id'=> $connectedEntity->id,
+            'status' => 'pending'
+        ])->sum('total_amount');
+
+        $createdCount = ManufacturerOrder::where([
+            'manufacturer_id'=> $connectedEntity->id,
+            'status' => 'created'
+        ])->count();
+        $createdSum = ManufacturerOrder::where([
+            'manufacturer_id'=> $connectedEntity->id,
+            'status' => 'created'
+        ])->sum('total_amount');
+
+        $rejectedCount = ManufacturerOrder::where([
+            'manufacturer_id'=> $connectedEntity->id,
+            'status' => 'rejected'
+        ])->count();
+        $rejectedSum = ManufacturerOrder::where([
+            'manufacturer_id'=> $connectedEntity->id,
+            'status' => 'rejected'
+        ])->sum('total_amount');
+
+
+        return response()->json([
+            'success' => true,
+            'allOrders' => [
+                'count' => $allOrdersCount,
+                'sum' => $allOrdersSum,
+            ],
+            'pending' => [
+                'count' => $pendingCount,
+                'sum' => $pendingSum,
+            ],
+            'created' => [
+                'count' => $createdCount,
+                'sum' => $createdSum,
+            ],
+            'rejected' => [
+                'count' => $rejectedCount,
+                'sum' => $rejectedSum,
+            ],
+        ]);
+
+    }
 }

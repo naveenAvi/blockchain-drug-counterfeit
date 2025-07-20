@@ -32,7 +32,6 @@ const CreateUsers = () => {
       setForm({ firstName: '', lastName: '', email: '', designation: '', entID: '' });
     } catch (err) {
       if (err.response && err.response.data && err.response.data.errors) {
-        // Laravel validation errors
         const messages = Object.values(err.response.data.errors).flat().join(' ');
         setError(messages);
       } else {
@@ -58,12 +57,13 @@ const CreateUsers = () => {
             </div>
           </div>
 
-          <div className="row min-vh-70 align-items-center justify-content-center">
-            <div className="col-md-6">
-              <div className="card shadow" style={{ padding: '2rem 0' }}>
-                <div className="card-body py-5">
-                  <h3 className="mb-4 text-center">Create User</h3>
-                  <form onSubmit={handleSubmit}>
+          <div className="card shadow" style={{ padding: '1rem 0' }}>
+            <div className="card-body py-3 px-3">
+              <h3 className="mb-4">Create User</h3>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  {/* Left Column */}
+                  <div className="col-md-6">
                     <div className="mb-4">
                       <label className="form-label"><strong>First Name</strong></label>
                       <input
@@ -74,18 +74,6 @@ const CreateUsers = () => {
                         onChange={handleChange}
                         required
                         placeholder="Enter first name"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label className="form-label"><strong>Last Name</strong></label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="lastName"
-                        value={form.lastName}
-                        onChange={handleChange}
-                        required
-                        placeholder="Enter last name"
                       />
                     </div>
                     <div className="mb-4">
@@ -111,6 +99,22 @@ const CreateUsers = () => {
                         placeholder="Enter designation"
                       />
                     </div>
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="col-md-6">
+                    <div className="mb-4">
+                      <label className="form-label"><strong>Last Name</strong></label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="lastName"
+                        value={form.lastName}
+                        onChange={handleChange}
+                        required
+                        placeholder="Enter last name"
+                      />
+                    </div>
                     <div className="mb-4">
                       <label className="form-label"><strong>Entity ID</strong></label>
                       <input
@@ -123,22 +127,29 @@ const CreateUsers = () => {
                         placeholder="Enter entity ID"
                       />
                     </div>
-                    <button type="submit" className="btn btn-primary w-100 py-2">Submit</button>
-                    {success && (
-                      <div className="alert alert-success mt-4" role="alert">
-                        {success}
-                      </div>
-                    )}
-                    {error && (
-                      <div className="alert alert-danger mt-4" role="alert">
-                        {error}
-                      </div>
-                    )}
-                  </form>
+
+                  </div>
                 </div>
-              </div>
+                <div className="row">
+                  <div className="col-12 d-flex justify-content-end">
+                    <button type="submit" className="btn btn-primary py-2 px-4">Create User</button>
+                  </div>
+                </div>
+                {/* Success/Error Messages */}
+                {success && (
+                  <div className="alert alert-success mt-3" role="alert">
+                    {success}
+                  </div>
+                )}
+                {error && (
+                  <div className="alert alert-danger mt-3" role="alert">
+                    {error}
+                  </div>
+                )}
+              </form>
             </div>
           </div>
+
 
         </div>
       </div>

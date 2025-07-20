@@ -28,6 +28,7 @@ import OrderHistory from "./CommonPages/SendDrug/OrderHistory/OrderHistory";
 import ApproveOrder from "./CommonPages/Approvals/ApproveOrder";
 
 import GenarateToken from "./CommonPages/SendDrug/GenarateToken/GenarateToken";
+import ImporterDashboard from "./CommonPages/Dashboard/ImporterDashboard";
 
 //Accounts
 const Approuter = () => {
@@ -78,7 +79,10 @@ const Approuter = () => {
       
             <Route path="/transfer-tokens" element={<CommonTransfer />} />
             <Route path="/manufacture-dashboard" element={<ManufactureDashboard />} />
+            <Route path="/importer-dashboard" element={<ImporterDashboard />} />
             <Route path="/distributor-dashboard" element={<DistributorDashboard />} />
+
+            
 
             <Route path="/pos" element={<PosScreen />} />
           </Route>
