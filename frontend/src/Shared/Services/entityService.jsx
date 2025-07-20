@@ -5,8 +5,8 @@ export async function addEntities(data){
     return axios.post(`${backendAPI}api/entities`, data)
 }
 
-export async function getEntities(){
-    return axios.get(`${backendAPI}api/entities`)
+export async function getEntities(entityType){
+    return axios.get(`${backendAPI}api/entities/filterby/${entityType}`)
 }
 
 export async function getEntitiesByID(id){

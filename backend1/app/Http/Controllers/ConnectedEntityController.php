@@ -33,6 +33,27 @@ class ConnectedEntityController extends Controller
         ]);
     }
 
+    public function indexFIlterByTpe(Request $request, $type)
+    {
+        //$type = $request->query('type');
+
+        
+
+        $query = ConnectedEntity::query();
+
+        if ($type) {
+            $query->where('type', $type);
+        }
+
+        $entities = $query->orderBy('name')->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Entities retrieved successfully.',
+            'data' => $entities
+        ]);
+    }
+
     
     public function store(Request $request)
     {
