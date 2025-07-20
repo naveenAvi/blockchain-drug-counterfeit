@@ -334,7 +334,7 @@ const CommonTransfer = () => {
                           options={manufacturers}
                           value={manufacturerId}
                           onChange={setManufacturerId}
-                          placeholder="Select manufacturer"
+                          placeholder="Select transfer to "
                           searchKey="name"
                           error={errors.manufacturer}
                         />
@@ -487,14 +487,14 @@ const CommonTransfer = () => {
                     </small>
                   </div>
                   <div className="btn-group">
-                    <button
+                    {/* <button
                       type="button"
                       className="btn btn-outline-secondary"
                       onClick={resetForm}
                     >
                       <i className="fas fa-times me-1"></i>
                       Cancel
-                    </button>
+                    </button> */}
                     <button
                       type="submit"
                       className="btn btn-primary"

@@ -15,7 +15,6 @@ class ManufacturerOrder extends Model
 
     protected $fillable = [
         "order_number",
-        'importerOrderID',
         'invoice_number',
         'reference_document',
         'manufacturer_id',

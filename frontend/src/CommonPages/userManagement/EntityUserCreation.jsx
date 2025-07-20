@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import Swal from 'sweetalert2';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
-import { createCorpUser, getEntities, getEntitiesByID } from '../../Shared/Services/entityService';
+import { createCorpUser, getEntitiesByID } from '../../Shared/Services/entityService';
 import { Tag } from 'feather-icons-react';
 
 const EntityUserCreation = () => {
   const { entityId } = useParams();
   const [entity, setEntity] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false); // For button loading state
+
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -18,7 +20,6 @@ const EntityUserCreation = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -42,6 +43,7 @@ const EntityUserCreation = () => {
       })
       .catch(error => {
         console.error("Error fetching entity details:", error);
+        Swal.fire('Error', 'Failed to load entity details.', 'error');
       })
       .finally(() => setLoading(false));
   }, [entityId]);
@@ -54,6 +56,7 @@ const EntityUserCreation = () => {
       return;
     }
 
+    setSubmitting(true);
     try {
       const payload = {
         ...formData,
@@ -62,21 +65,27 @@ const EntityUserCreation = () => {
 
       const res = await createCorpUser(payload);
       if (res.data.success) {
-        setSuccessMessage('User created successfully!');
+        Swal.fire('Success', 'User created successfully!', 'success');
         setFormData({ firstname: '', lastname: '', email: '', designation: '' });
         setErrors({});
+      } else {
+        Swal.fire('Error', 'Failed to create user.', 'error');
       }
     } catch (err) {
       if (err.response && err.response.data.errors) {
         setErrors(err.response.data.errors);
       } else {
-        console.error(err);
+        Swal.fire('Error', err.message || 'Something went wrong', 'error');
       }
+    } finally {
+      setSubmitting(false);
     }
   };
+
   if (loading || !entity) {
     return <div className="p-5">Loading...</div>;
   }
+
   return (
     <div className="main-wrapper">
       <Header />
@@ -87,8 +96,6 @@ const EntityUserCreation = () => {
           <div className="page-header">
             <h4 className="page-title">Create User for Entity ID: {entityId}</h4>
           </div>
-
-
 
           <div className="card">
             <div className="card-body d-flex align-items-center justify-content-between flex-wrap row-gap-3">
@@ -112,7 +119,6 @@ const EntityUserCreation = () => {
                   <div className="d-flex align-items-center mb-1">
                     <h4 className="mb-0 fw-semibold me-2">{entity.name}</h4>
                     <Tag color="blue">{entity.type}</Tag>
-                    {entity.type}
                   </div>
 
                   <span className="d-block fs-13">
@@ -141,12 +147,6 @@ const EntityUserCreation = () => {
               </div>
             </div>
           </div>
-
-
-
-          {successMessage && (
-            <div className="alert alert-success">{successMessage}</div>
-          )}
 
           <form onSubmit={handleSubmit}>
             <div className="card">
@@ -181,7 +181,16 @@ const EntityUserCreation = () => {
                 </div>
 
                 <div className="col-12 text-end">
-                  <button type="submit" className="btn btn-primary">Create User</button>
+                  <button type="submit" className="btn btn-primary" disabled={submitting}>
+                    {submitting ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Creating...
+                      </>
+                    ) : (
+                      'Create User'
+                    )}
+                  </button>
                 </div>
               </div>
             </div>

@@ -6,12 +6,12 @@ import Chart from 'chart.js/auto';
 
 import Header from '../Header';
 import Sidebar from '../Sidebar';
-import { getDashboardData } from '../../Shared/Services/manufacturerServices';
+import { getDashboardData } from '../../Shared/Services/ImporterServices';
 
 const { Search } = Input;
 const { Option } = Select;
 
-const ManufactureDashboard = () => {
+const ImporterDashboard = () => {
     const [dashboardMetrics, setDashboardMetrics] = React.useState({
         totalOrders: 0,
         pendingOrders: 0,
@@ -200,7 +200,7 @@ const ManufactureDashboard = () => {
                             <div className="card-body">
                                 <div className="d-flex justify-content-between align-items-center mb-3">
                                     <div>
-                                        <h2 className="fw-bold mb-4">Manufacture Dashboard</h2>
+                                        <h2 className="fw-bold mb-4">Importer Dashboard</h2>
 
                                     </div>
                                     
@@ -342,4 +342,4 @@ const ManufactureDashboard = () => {
     );
 };
 
-export default ManufactureDashboard;
+export default ImporterDashboard;

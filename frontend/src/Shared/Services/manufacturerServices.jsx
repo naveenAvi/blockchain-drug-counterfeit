@@ -14,3 +14,6 @@ export async function getManuorderListByID(data){
 export async function confirmAndCreateTokens(data){
     return axios.post(`${backendAPI}api/manufacturer/status-update`,data )
 }
+export async function getDashboardData(data){
+    return axios.post(`${backendAPI}api/manufacturer/get-dashbord-data`,data )
+}

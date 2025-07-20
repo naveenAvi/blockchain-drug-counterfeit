@@ -9,3 +9,6 @@ export async function createOrder(orderDetails){
 export async function getorderList(){
     return axios.post(`${backendAPI}api/importer/get-importer-orders`, )
 }
+export async function getDashboardData(){
+    return axios.post(`${backendAPI}api/importer/get-dashbord-data`, )
+}

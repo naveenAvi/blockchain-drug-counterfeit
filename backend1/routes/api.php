@@ -52,6 +52,7 @@ Route::middleware(['auth:sanctum', 'role:manufacturer'])->group(function () {
     // my orders list, ordered by me
     Route::post('/manufacturer/list-orders', [ManufacturerOrdersController::class, 'show']);
     Route::post('/manufacturer/status-update', [ManufacturerOrdersController::class, 'statusUpdate']);
+    Route::post('/manufacturer/get-dashbord-data', [ManufacturerOrdersController::class, 'getDashboardData']);
 
     
 
@@ -61,6 +62,9 @@ Route::middleware(['auth:sanctum', 'role:manufacturer'])->group(function () {
 
 Route::middleware(['auth:sanctum','role:importer'])->group(function () {
     Route::post('/importer/create-order', [ImporterOrdersController::class, 'store']);
+    Route::post('/importer/get-dashbord-data', [ImporterOrdersController::class, 'getDashboardData']);
+
+    
 
 });
 

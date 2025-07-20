@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ImporterOrder;
 use App\Models\ManufacturerOrder;
+use App\Models\ConnectedEntity;
+use Auth;
 use Illuminate\Http\Request;
 
 class ImporterOrdersController extends Controller
@@ -92,5 +94,73 @@ class ImporterOrdersController extends Controller
         $order->delete();
 
         return response()->json(['message' => 'Order deleted']);
+    }
+
+
+    public function getDashboardData()
+    {
+        $user = Auth::user();
+        $entID = $user->entID ?? null;
+        if (!$entID) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Authenticated user does not have an entID.'
+            ], 403);
+        }
+        $connectedEntity = ConnectedEntity::where([
+            'entID' => $entID
+        ])->firstOrFail();
+
+        $allOrdersCount = ImporterOrder::where('manufacturer_id', $connectedEntity->id)->count();
+        $allOrdersSum = ImporterOrder::where('manufacturer_id', $connectedEntity->id)->sum('total_amount');
+
+        $pendingCount = ImporterOrder::where([
+            'importer_id'=> $connectedEntity->id,
+            'status' => 'pending'
+        ])->count();
+        $pendingSum = ImporterOrder::where([
+            'importer_id'=> $connectedEntity->id,
+            'status' => 'pending'
+        ])->sum('total_amount');
+
+        $createdCount = ImporterOrder::where([
+            'importer_id'=> $connectedEntity->id,
+            'status' => 'created'
+        ])->count();
+        $createdSum = ImporterOrder::where([
+            'importer_id'=> $connectedEntity->id,
+            'status' => 'created'
+        ])->sum('total_amount');
+
+        $rejectedCount = ImporterOrder::where([
+            'importer_id'=> $connectedEntity->id,
+            'status' => 'rejected'
+        ])->count();
+        $rejectedSum = ImporterOrder::where([
+            'importer_id'=> $connectedEntity->id,
+            'status' => 'rejected'
+        ])->sum('total_amount');
+
+
+        return response()->json([
+            'success' => true,
+            'allOrders' => [
+                'count' => $allOrdersCount,
+                'sum' => $allOrdersSum,
+            ],
+            'pending' => [
+                'count' => $pendingCount,
+                'sum' => $pendingSum,
+            ],
+            'created' => [
+                'count' => $createdCount,
+                'sum' => $createdSum,
+            ],
+            'rejected' => [
+                'count' => $rejectedCount,
+                'sum' => $rejectedSum,
+            ],
+        ]);
+
     }
 }

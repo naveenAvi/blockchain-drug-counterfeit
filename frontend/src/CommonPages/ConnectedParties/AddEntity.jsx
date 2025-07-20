@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
 import { addEntities } from '../../Shared/Services/entityService';
 
 const countries = ["USA", "India", "Germany", "Canada", "UK", "China", "France", "Others"];
@@ -28,19 +28,20 @@ const AddEntity = () => {
   const licenseLabel = licenseTypeLabels[normalizedEntity] || 'License Type';
 
   const [formData, setFormData] = useState({
-    type:entityType,
+    type: entityType,
     name: '',
     address: '',
     country: '',
     contact: '',
-    company_email:'',
+    company_email: '',
     licenseType: '',
     licenseNumber: '',
     established_year: '',
-    logo: null
+    logo: null,
   });
 
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -57,7 +58,7 @@ const AddEntity = () => {
     if (!formData.address.trim()) newErrors.address = "Address is required";
     if (!formData.country) newErrors.country = "Country is required";
     if (!formData.contact.trim()) newErrors.contact = "Contact number is required";
-    if (!formData.company_email.trim()) newErrors.contact = "Contact number is required";
+    if (!formData.company_email.trim()) newErrors.company_email = "Company email is required";
     if (!formData.licenseType.trim()) newErrors.licenseType = `${licenseLabel} is required`;
     if (!formData.licenseNumber.trim()) newErrors.licenseNumber = "License number is required";
     if (!formData.established_year) newErrors.established_year = "Year is required";
@@ -68,11 +69,43 @@ const AddEntity = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
+    setIsLoading(true);
+
     addEntities(formData)
       .then(response => {
-        console.log(response)
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: `${capitalizedEntity} registered successfully!`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        setFormData({
+          type: entityType,
+          name: '',
+          address: '',
+          country: '',
+          contact: '',
+          company_email: '',
+          licenseType: '',
+          licenseNumber: '',
+          established_year: '',
+          logo: null,
+        });
+        setErrors({});
       })
-
+      .catch(error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.response?.data?.message || 'Failed to register entity. Please try again.',
+        });
+        console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -167,7 +200,20 @@ const AddEntity = () => {
                 </div>
 
                 <div className="col-12 text-end">
-                  <button type="submit" className="btn btn-primary">Register {capitalizedEntity}</button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Registering...
+                      </>
+                    ) : (
+                      `Register ${capitalizedEntity}`
+                    )}
+                  </button>
                 </div>
 
               </div>
