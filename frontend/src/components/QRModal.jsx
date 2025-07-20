@@ -25,9 +25,6 @@ export default function QRModal() {
                         <div className='col-md-6'>
                             <img src="/QR_Code_Example.svg.png" alt="" />
                         </div>
-
-
-
                     </div>
                 </div>
             </div>
