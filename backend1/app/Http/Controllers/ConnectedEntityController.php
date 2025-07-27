@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\json;
 
@@ -55,96 +56,104 @@ class ConnectedEntityController extends Controller
     }
 
     
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'type' => 'required|in:manufacturer,importer,distributor,pharmacy',
-            'name' => 'required|string|max:255',
-            'address' => 'required|string',
-            'country' => 'required|string|max:255',
-            'contact' => 'required|string|max:255',
-            'company_email' => 'required|email|max:255',
-            'license_type' => 'nullable|string|max:255',
-            'license_number' => 'nullable|string|max:255',
-            'established_year' => 'required|digits:4|integer|min:1800|max:' . (date('Y') + 1),
-            'logo' => 'nullable|image|max:2048'
-        ]);
 
-        if ($request->hasFile('logo')) {
-            $validated['logo_path'] = $request->file('logo')->store('logos', 'public');
-        }
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'type' => 'required|in:manufacturer,importer,distributor,pharmacy',
+        'name' => 'required|string|max:255',
+        'address' => 'required|string',
+        'country' => 'required|string|max:255',
+        'contact' => 'required|string|max:255',
+        'company_email' => 'required|email|max:255',
+        'license_type' => 'nullable|string|max:255',
+        'license_number' => 'nullable|string|max:255',
+        'established_year' => 'required|digits:4|integer|min:1800|max:' . (date('Y') + 1),
+        'logo' => 'nullable|image|max:2048'
+    ]);
 
-        $prefixMap = [
-            'manufacturer' => 'manu',
-            'importer' => 'imp',
-            'distributor' => 'dist',
-            'pharmacy' => 'pharm',
-        ];
-        $prefix = $prefixMap[$validated['type']];
+    if ($request->hasFile('logo')) {
+        $validated['logo_path'] = $request->file('logo')->store('logos', 'public');
+    }
 
-        $count = ConnectedEntity::where('type', $validated['type'])->count() + 1;
+    $prefixMap = [
+        'manufacturer' => 'manu',
+        'importer' => 'imp',
+        'distributor' => 'dist',
+        'pharmacy' => 'pharm',
+    ];
+    $prefix = $prefixMap[$validated['type']];
+    $count = ConnectedEntity::where('type', $validated['type'])->count() + 1;
+    $entID = $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
+    $validated['entID'] = $entID;
+    $validated['is_active'] = 1;
+    $password = Str::random(12);
 
+    if (ConnectedEntity::where('name', $validated['name'])->first()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Entity with this name already exists.',
+            'data' => $validated
+        ], 400);
+    }
 
+    DB::beginTransaction();
 
-        $entID = $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
-        $validated['entID'] = $entID;
-
-        $validated['is_active'] = 1;
-        $password = Str::random(12);
-
-
-        if(ConnectedEntity::where('name', $validated['name'])->first()){
-            return response()->json([
-                'success' => false,
-                'message' => 'Entity with this name already exists.',
-                'data' => $validated
-            ], 400);
-        }
+    try {
+        // Store entity
         $entity = ConnectedEntity::create($validated);
 
-        try {
-            $response = Http::post('http://20.193.133.149:3000/api/register', [
-                'username' => $validated['name'],
-                'org' => 'Org1',
-                'role' => $validated['type'],
-                'password' => $password
+        // Call Fabric server
+        $response = Http::post('http://20.193.133.149:3000/api/register', [
+            'username' => $validated['name'],
+            'org' => 'Org1',
+            'role' => $validated['type'],
+            'password' => $password
+        ]);
+
+        if ($response->successful()) {
+            $responseData = $response->json();
+            $validated['secret'] = $responseData['secret'] ?? null;
+
+            EntityCredentials::create([
+                'entityID' => $entID,
+                'certificate_path' =>  null,
+                'private_key_path' =>  null,
+                'username' => $validated['name'] . "." . $prefix,
+                'pasword' => $password,
+                'secret' => $validated['secret'],
+                'is_active' => true
             ]);
 
-            if ($response->successful()) {
-                $responseData = $response->json();
-                $validated['secret'] = $responseData['secret'] ?? null;
+            DB::commit(); 
 
-                EntityCredentials::create([
-                    'entityID' => $entID,
-                    'certificate_path' =>  null,
-                    'private_key_path' =>  null,
-                    'username' => $validated['name'] . "." . $prefix,
-                    'pasword' => $password,
-                    'secret' => $validated['secret'],
-                    'is_active' => true
-                ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Entity created successfully.',
+                'data' => $entity
+            ], 201);
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Entity created successfully.',
-                    'data' => $entity
-                ], 201);
-            }else{
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Entity created but failed to register with fabric server.',
-                    'data' => $validated,
-                    'fabric_error' => $response->body()
-                ], 500);
-            }
-        } catch (\Exception $e) {
+        } else {
+            DB::rollBack(); 
+
             return response()->json([
                 'success' => false,
-                'message' => 'Entity created but encountered an error contacting fabric server.',
-                'error' => $e->getMessage()
+                'message' => 'Entity created but failed to register with fabric server.',
+                'data' => $validated,
+                'fabric_error' => $response->body()
             ], 500);
         }
+    } catch (\Exception $e) {
+        DB::rollBack(); 
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Entity creation failed due to an error.',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
 
 
     public function edit(ConnectedEntity $connectedEntity)

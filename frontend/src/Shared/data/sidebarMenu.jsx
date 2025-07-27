@@ -78,7 +78,7 @@ const sidebarMenu = [
       {
         name: "Create Pharmacies",
         path: "/create/pharmacy",
-        allowedRoles: ["admin" ]
+        allowedRoles: ["admin"]
       },
       {
         name: "Importer List",
@@ -103,22 +103,28 @@ const sidebarMenu = [
       {
         name: "Add Order",
         path: "/create-order",
-        allowedRoles: [ "importer"]
+        allowedRoles: ["importer"]
       },
       {
         name: "Order List",
         path: "/order-list",
         allowedRoles: ["admin", "importer", "manufacturer"]
       },
-{
+      {
         name: "Transfer",
         path: "/transfer-tokens",
         allowedRoles: "all"
       },
+{
+        name: "transactions ",
+        path: "/transaction-list",
+        allowedRoles: "all"
+      },
       
+
     ]
   },
-  
+
 ];
 
 export default sidebarMenu;

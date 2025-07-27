@@ -9,6 +9,7 @@ use App\Http\Controllers\DrugController;
 use App\Http\Controllers\DrugTransactionController;
 use App\Http\Controllers\ImporterOrdersController;
 use App\Http\Controllers\DrugWalletController;
+use App\Http\Controllers\LoggingCOntroller;
 
 Route::get('/k', function () {
     return 'asdadsad';
@@ -56,6 +57,7 @@ Route::middleware(['auth:sanctum', 'role:manufacturer'])->group(function () {
     Route::post('/manufacturer/list-orders', [ManufacturerOrdersController::class, 'show']);
     Route::post('/manufacturer/status-update', [ManufacturerOrdersController::class, 'statusUpdate']);
     Route::post('/manufacturer/get-dashbord-data', [ManufacturerOrdersController::class, 'getDashboardData']);
+    Route::post('/manufacturer/get-transactions-by-reference/{referenceNo}', [DrugTransactionController::class, 'getTransactionsByReference']);
 
     
 
@@ -88,6 +90,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/my/drug-amount/{drugid}', [DrugWalletController::class, 'showByDrugId']);
     Route::post('/my/transfer', [DrugWalletController::class, 'handleTransaction']);
     Route::post('/my/tansferTO', [DrugWalletController::class, 'getToEntities']);
+
+
+    Route::post('/my/getTRansactionHistory', [DrugTransactionController::class, 'getAssetHistory']);
     
 
 });
+    Route::post('/logging/transaction-status', [LoggingCOntroller::class, 'getTransactionLogs']);

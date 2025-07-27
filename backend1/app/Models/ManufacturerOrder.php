@@ -22,6 +22,7 @@ class ManufacturerOrder extends Model
         'order_date',
         'status',
         'total_amount',
+        "createdAMount",
         'notes',
         'drugid',
         "message"
@@ -44,5 +45,9 @@ class ManufacturerOrder extends Model
     public function importer()
     {
         return $this->belongsTo(ConnectedEntity::class, "importer_id",'id');
+    }
+    public function transactions()
+    {
+        return $this->hasMany(corp_transactions::class,'referenceNo',"order_number");
     }
 }

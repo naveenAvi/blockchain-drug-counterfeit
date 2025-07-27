@@ -18,6 +18,7 @@ class local_drug_wallet extends Model
         "assetsID",
         'entID',
         'ownerID',
+        'batchID',
         'avail_amount',
     ];
 }

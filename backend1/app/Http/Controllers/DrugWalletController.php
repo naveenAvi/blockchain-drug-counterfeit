@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\ConnectedEntity;
+use App\Models\corp_transactions;
 use App\Models\LocalDrugWallet;
 use App\Models\local_drug_wallet;
 use Auth;
@@ -37,7 +38,7 @@ class DrugWalletController extends Controller
             return response()->json(['message' => 'Unauthorized: entID not found'], 403);
         }
 
-        $records = local_drug_wallet::where(['drugid'=> $drug_id, 'entID'=>$entID ])->first();
+        $records = local_drug_wallet::where(['drugid'=> $drug_id, 'entID'=>$entID ])->get();
         return response()->json($records, 200);
     }
 
@@ -76,6 +77,7 @@ class DrugWalletController extends Controller
             'referenceDoc' => 'nullable|string|max:255',
             'amount' => 'required|integer|min:1',
             "toParty" => 'required|string',
+            "batchID" => 'required|string',
         ]);
 
         $entID = $user->entID ?? null;
@@ -89,8 +91,12 @@ class DrugWalletController extends Controller
         $amount = (int) $validated['amount'];
         $drugId = $validated['drugId'];
 
+
          $connectedEntity = ConnectedEntity::where([
             'entID' => $entID
+        ])->firstOrFail();
+        $toCOnnectedENtity = ConnectedEntity::where([
+            'entID' => $validated["toParty"]
         ])->firstOrFail();
         $credentials = EntityCredentials::where('entityID', $entID)->first();
         if (!$credentials) {
@@ -105,7 +111,7 @@ class DrugWalletController extends Controller
         $input = $credentials->username;
         $manuUsername = explode('.', $input)[0];
 
-
+ 
         $login = $fabricAuth->login($manuUsername, $connectedEntity->type, 'Org1', $credentials->pasword);
         $token = $login['token'];
 
@@ -119,26 +125,72 @@ class DrugWalletController extends Controller
             
         try {
             $response = Http::withToken($token)->post('http://20.193.133.149:3000/api/transfer', [
-                "drugID"=> $drugId,
+                "drugId"=> $drugId,
                 'username' => $connectedEntity->name,
                 'org' => 'Org1',
-                'role' => $connectedEntity->role,
+                // 'role' => $connectedEntity->role,
                 "newOwner"=> $validated['toParty'],
-                'amount' => $amount
+                'amount' => $amount,
+                "batchID"=> $validated['batchID']
             ]);
+            $response = $response->json();
+            $transferMessage = $response['result']['message'] ?? null;
+            $transferMessage = $response['error'] ?? null;
+            $transferredAssetID = $response['result']['transferredAssetID'] ?? null;
+
+            if (!($transferMessage === "Transfer successful from single block" ||$transferMessage === "Transfer successful by merging multiple blocks" )){
+                return response()->json([
+                    'success' => false,
+                    'message' => ' Thrown error from the fabrics',
+                    'error' => $transferMessage ?? $transferMessage,
+                    "response"=>$response
+                ], 500);
+            }
 
             $wallet = local_drug_wallet::where('drugid', $drugId)
                 ->where('entID', $entID)
                 ->first();
+            corp_transactions::create([
+                'drugid' => $drugId,
+                'fromEntID' => $entID,
+                'toEntID' => $validated['toParty'],
+                'amount' => $amount,
+                'status' => "transfer",
+                "referenceNo" => $transferredAssetID ?? null,
+                "assetsID" => $transferredAssetID ?? null,
+                "batchID"=> $validated['batchID'] ?? null
+            ]);
 
             if ($wallet) {
                 $wallet->avail_amount -= $amount;
                 $wallet->save();
             } 
+
+
+            
+
+
+
+            $wallet2 = local_drug_wallet::where(['drugid'=> $drugId, "batchID"=>$validated["batchID"]])
+                ->where('entID', $validated['toParty'])
+                ->first();
+            if ($wallet2) {
+                $wallet2->avail_amount += $amount;
+                $wallet2->save();
+            }else{
+                local_drug_wallet::create([
+                    'drugid' => $drugId,
+                    'entID' => $validated['toParty'],
+                    "assetsID"=>$transferredAssetID,
+                    "batchID"=>$validated["batchID"],
+                    'avail_amount' => $amount
+                ]);
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Transaction successful',
-                'data' => $wallet
+                'data' => $wallet,
+                "response"=>$response
             ], 200);
 
         } catch (\Exception $e) {

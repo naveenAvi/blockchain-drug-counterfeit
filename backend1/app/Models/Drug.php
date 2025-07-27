@@ -10,6 +10,7 @@ class Drug extends Model
     use HasFactory;
 
     protected $fillable = [
+        "id",
         'name',
         'type',
         'dosages',
@@ -33,6 +34,7 @@ class Drug extends Model
 
     protected $casts = [
         'dosages' => 'array',
+        "id"=>"integer",
     ];
 
     public function drug()

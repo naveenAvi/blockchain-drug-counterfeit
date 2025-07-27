@@ -15,6 +15,7 @@ import { useUser } from '../../Shared/contexts/userContext';
 const OrderList = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [datasource, setdatasource] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
   const { user } = useUser();
 
 
@@ -28,18 +29,25 @@ const OrderList = () => {
   };
 
   useEffect(() => {
+    setLoading(true); // Set loading to true before fetching data
     if (user.role === "manufacturer") {
       getManuorderList().then((response) => {
         setdatasource(response.data.data);
       }).catch((error) => {
         console.error("Error fetching order list:", error);
+      }).finally(() => {
+        setLoading(false); // Set loading to false after data is fetched (success or error)
       });
     } else if (user.role === "importer") {
       getorderList().then((response) => {
         setdatasource(response.data.data);
-      })
+      }).catch((error) => {
+        console.error("Error fetching order list:", error);
+      }).finally(() => {
+        setLoading(false); // Set loading to false after data is fetched (success or error)
+      });
     }
-  }, [])
+  }, [user.role]); // Add user.role to dependency array to re-fetch if role changes
 
 
   const statusColors = {
@@ -51,22 +59,22 @@ const OrderList = () => {
     {
       title: "Drug Name",
       dataIndex: "drug_name",
-      sorter: (a, b) => a.drugName.localeCompare(b.drugName),
+      sorter: (a, b) => a.drug_name.localeCompare(b.drug_name), // Corrected dataIndex for sorter
     },
     {
       title: "Type",
       dataIndex: "drug_type",
-      sorter: (a, b) => a.type.localeCompare(b.type),
+      sorter: (a, b) => a.drug_type.localeCompare(b.drug_type), // Corrected dataIndex for sorter
     },
     {
       title: "Importer",
       dataIndex: "importer_name",
-      sorter: (a, b) => a.dosage.localeCompare(b.dosage),
+      sorter: (a, b) => a.importer_name.localeCompare(b.importer_name), // Corrected dataIndex for sorter
     },
     {
       title: "Manufacturer",
       dataIndex: "manufacturer_name",
-      sorter: (a, b) => a.manufacturer.localeCompare(b.manufacturer),
+      sorter: (a, b) => a.manufacturer_name.localeCompare(b.manufacturer_name), // Corrected dataIndex for sorter
     },
     {
       title: "Invoice No.",
@@ -110,7 +118,7 @@ const OrderList = () => {
         <div className="text-end">
           <div className="dropdown dropdown-action">
             <Link
-              to={`/order-list-view/5`}
+              to={`/order-details/${record.order_number}`} // Use record.order_number for dynamic linking
               className="action-icon"
             >
               <i className="fas fa-eye" />
@@ -178,6 +186,7 @@ const OrderList = () => {
                       columns={columns}
                       dataSource={datasource}
                       rowKey={(record) => record.order_number}
+                      loading={loading} // Pass the loading state to the Table component
                     />
                   </div>
                 </div>

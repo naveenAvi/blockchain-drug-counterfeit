@@ -15,7 +15,8 @@ class ImporterOrder extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        "id",
+        // "id",
+        "order_number",
         'invoice_number',
         'reference_document',
         'manufacturer_id',

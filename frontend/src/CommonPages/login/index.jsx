@@ -12,6 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useUser();
 
@@ -22,35 +23,32 @@ const Login = () => {
   const userLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const response = await userLoginAction({ email, password });
-
       const { token, user } = response.data;
 
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(user));
-
-      localStorage.setItem('authToken', token);
       setUser(user);
 
-      //should be addedddd
       if (user.role === 'manufacturer') {
         navigate('/manufacture-dashboard');
       } else if (user.role === 'pharmacy') {
         navigate('/pharmacy/dashboard');
       } else if (user.role === 'distributor') {
         navigate('/distributor/dashboard');
-      } else if (user.role === 'distributor') {
+      } else if (user.role === 'importer') {
         navigate('/importer-dashboard');
-        
       } else {
         navigate('/user/dashboard');
       }
-
     } catch (err) {
       console.error(err);
       setError('Invalid email or password.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,7 +116,16 @@ const Login = () => {
                       </div>
 
                       <div className="form-group login-btn mt-3">
-                        <button type="submit" className="btn btn-primary btn-block">Login</button>
+                        <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
+                          {loading ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                              Logging in...
+                            </>
+                          ) : (
+                            "Login"
+                          )}
+                        </button>
                       </div>
                     </form>
 

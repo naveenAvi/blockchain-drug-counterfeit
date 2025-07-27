@@ -123,6 +123,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, searchKey = '
 const CommonTransfer = () => {
   const [drugs, setDrugs] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
+  const [batchesandAm, setbatchesandAm] = useState([]);
   const [fromParty, setFromParty] = useState({});
   const [invoiceShow, setInvoiceShow] = useState({ display: false, order: {} });
   const [selectedDrugId, setSelectedDrugId] = useState('');
@@ -130,6 +131,7 @@ const CommonTransfer = () => {
   const [drugType, setDrugType] = useState('');
   const [dosage, setDosage] = useState('');
   const [manufacturerId, setManufacturerId] = useState('');
+  const [batchID, setbatchID] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [referenceDoc, setReferenceDoc] = useState(null);
   const [amount, setAmount] = useState('');
@@ -138,6 +140,7 @@ const CommonTransfer = () => {
   const { user } = useUser();
 
   const selectedDrug = drugs.find(d => d.id === parseInt(selectedDrugId));
+  const selectedBatch = batchesandAm.find(d => d.drug_wallet_id === parseInt(batchID));
 
   const fetchDrugs = async () => {
     try {
@@ -181,6 +184,7 @@ const CommonTransfer = () => {
     try {
       const response = await getMyDrugAmount({ drug_id: selectedDrug.drug_id, id: selectedDrug.id, entID: user.entID });
       setWalletAmount(response.data);
+      setbatchesandAm(response.data)
     } catch (error) {
       console.error('Error fetching drug balance:', error);
     }
@@ -223,30 +227,28 @@ const CommonTransfer = () => {
     if (!validate()) return;
 
     setLoading(true);
+    const order = {
+      drugId: selectedDrug.drug_id,
+      drug: selectedDrug,
+      toParty: manufacturers.find(m => m.id === parseInt(manufacturerId))?.entID,
+      type: drugType,
+      dosage,
+      manufacturerId,
+      invoiceNumber,
+      referenceDoc,
+      amount,
+      fromParty,
+      batchID: selectedBatch?.batchID
+    };
+
     try {
-      const order = {
-        drugId: selectedDrug.drug_id,
-        drug: selectedDrug,
-        toParty: manufacturers.find(m => m.id === parseInt(manufacturerId))?.entID,
-        type: drugType,
-        dosage,
-        manufacturerId,
-        invoiceNumber,
-        referenceDoc,
-        amount,
-        fromParty
-      };
-
-      console.log(order)
-      transfer(order).resolve(response => {
-        AlertService.success('created tokens!');
-
-      }).catch(error => {
-        AlertService.error('Failed to create transfer order: ' + error.message);
-      });
-      //setInvoiceShow({ display: true, order });
+      const response = await transfer(order);
+      AlertService.success('Transaction success!');
+      // Optionally show invoice or reset form
+      // setInvoiceShow({ display: true, order });
     } catch (error) {
-      console.error('Error creating order:', error);
+      console.error('Transfer failed:', error);
+      AlertService.error('Failed to create transfer order: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -340,6 +342,24 @@ const CommonTransfer = () => {
                         />
                       </div>
 
+
+                      <div className="col-md-12">
+                        <label className="form-label fw-medium">
+                          <i className="fas fa-building me-1 text-primary"></i>
+                          Batch <span className="text-danger">*</span>
+                        </label>
+                        <SearchableSelect
+                          options={batchesandAm}
+                          value={batchID}
+                          onChange={setbatchID}
+                          placeholder="Select batch "
+                          searchKey="batchID"
+                          valueKey='drug_wallet_id'
+                          displayKey='batchID'
+                          error={errors.batch}
+                        />
+                      </div>
+
                       {/* Invoice Number */}
                       <div className="col-md-6">
                         <label className="form-label fw-medium">
@@ -377,9 +397,9 @@ const CommonTransfer = () => {
                           </span>
                           {errors.amount && <div className="invalid-feedback">{errors.amount}</div>}
                         </div>
-                        {walletAmount?.avail_amount && (
+                        {selectedBatch?.avail_amount && (
                           <small className="text-muted">
-                            Available: <span className="fw-medium text-success">{walletAmount.avail_amount}</span>
+                            Available: <span className="fw-medium text-success">{selectedBatch.avail_amount}</span>
                           </small>
                         )}
                       </div>
@@ -466,7 +486,7 @@ const CommonTransfer = () => {
                             <span className="fw-medium">Available</span>
                           </div>
                           <p className="text-success fw-bold mb-0 ms-4">
-                            {walletAmount?.avail_amount || '0'} units
+                            {selectedBatch?.avail_amount || '0'} units
                           </p>
                         </div>
                       </div>

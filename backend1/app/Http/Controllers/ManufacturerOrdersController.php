@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\LoggingService;
 use Illuminate\Http\Request;
 use App\Models\ManufacturerOrder;
 use App\Models\ConnectedEntity;
@@ -15,6 +16,7 @@ use Auth;
 
 class ManufacturerOrdersController extends Controller
 {
+    
     public function show(Request $request)
     {
         $orderid = $request->input("orderid");
@@ -35,31 +37,42 @@ class ManufacturerOrdersController extends Controller
 
         if($orderid){
             $order = ManufacturerOrder::where(['manufacturer_id'=>$connectedEntity->id, 'order_number'=>$orderid])
-            ->with(['drug', 'manufacturer', 'importer'])
+            ->with(['drug', 'manufacturer', 'importer','transactions'])
             ->get();
         }else{
             $order = ManufacturerOrder::where(['manufacturer_id'=>$connectedEntity->id])
-            ->with(['drug', 'manufacturer', 'importer'])
+            ->with(['drug', 'manufacturer', 'importer','transactions'])
             ->get();
         }
         
 
         $filteredOrders = $order->map(function ($order) {
-        return [
-            'order_number' => $order->order_number,
-            'invoice_number' => $order->invoice_number,
-            'order_date' => $order->order_date->toDateString(),
-            'status' => $order->status,
-            'total_amount' => $order->total_amount,
+            return [
+                'order_number' => $order->order_number,
+                'invoice_number' => $order->invoice_number,
+                'order_date' => $order->order_date->toDateString(),
+                'status' => $order->status,
+                'total_amount' => $order->total_amount,
 
-            'manufacturer_name' => $order->manufacturer->name ?? null,
-            'importer_name' => $order->importer->name ?? null,
+                'manufacturer_name' => $order->manufacturer->name ?? null,
+                'importer_name' => $order->importer->name ?? null,
 
-            'drug_name' => $order->drug->name ?? null,
-            'drug_strength' => $order->drug->strength ?? null,
-            'drug_type' => $order->drug->type ?? null,
-        ];
-    });
+                'drug_name' => $order->drug->name ?? null,
+                'drugID' => $order->drug->drug_id ?? null,
+                'drug_strength' => $order->drug->strength ?? null,
+                'drug_type' => $order->drug->type ?? null,
+
+                'transactions' => collect($order->transactions)->map(function ($transaction) {
+                    return [
+                        'transactionID' => $transaction->transactionID,
+                        'amount' => $transaction->amount,
+                        'status' => $transaction->status,
+                         'batchID' => $transaction->batchID,
+                        'created_at' => $transaction->created_at->toDateTimeString(),
+                    ];
+                }),
+            ];
+        });
 
         return response()->json([
             'success' => true,
@@ -96,7 +109,15 @@ class ManufacturerOrdersController extends Controller
     }
     public function statusUpdate(Request $request)
     {
+        $validated = $request->validate([
+            'order_number' => 'required|integer',
+            'amount' => 'required|integer',
+            'batchID' => 'required|string'
+        ]);
+
         $user = Auth::user();
+        $LoggingService = new LoggingService();
+
 
         $entID = $user->entID ?? null;
         if (!$entID) {
@@ -109,19 +130,53 @@ class ManufacturerOrdersController extends Controller
             'entID' => $entID
         ])->firstOrFail();
 
-        $orderid = $request->input("order_number");
+        $orderid = $validated["order_number"];
+        $amount = $validated["amount"];
+        $batchID = $validated["batchID"];
 
-        $order =  ManufacturerOrder::where(['manufacturer_id'=>$connectedEntity->id, 'order_number'=>$orderid, "status"=>"pending"])->firstOrFail();
+        $logingReference = $orderid . '-' . $batchID;
+
+
+        $LoggingService->clearTransactionLogs($logingReference);
+
+        $order =  ManufacturerOrder::where(['manufacturer_id'=>$connectedEntity->id, 'order_number'=>$orderid, "status"=>"pending"])->first();
+        if(!$order){
+            $LoggingService->addTransactionLog(1, "Manufacturer Order Validation", "fail","",$logingReference);
+        return response()->json([
+                'success' => false,
+                'message' => 'Order Not Found!',
+            ], 400);
+        }else{
+            $LoggingService->addTransactionLog(1, "Manufacturer Order Validation", "pass","",$logingReference);
+        }
+        $corp_transactions = corp_transactions::where("referenceNo",$order->id)->sum("amount");
+        
+        if($order->total_amount < $corp_transactions){
+            $LoggingService->addTransactionLog(1, "Order amount Exeeds", "fail","",$logingReference);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Exceeds order amount!',
+            ], 400);
+        }
         $connectedEntity = ConnectedEntity::where([
             'id' => $order->manufacturer_id
-        ])->firstOrFail();
+        ])->first();
+        if(!$connectedEntity){
+            $LoggingService->addTransactionLog(1, "Manufacturer identification", "fail","",$logingReference);
+        }else{
+            $LoggingService->addTransactionLog(1, "Manufacturer identification", "pass","",$logingReference);
+        }
 
         $credentials = EntityCredentials::where('entityID', $connectedEntity->entID)->first();
         if (!$credentials) {
+            $LoggingService->addTransactionLog(1, "Manufacturer Credentials Binding", "fail","",$logingReference);
             return response()->json([
                 'success' => false,
                 'message' => 'No credentials found for this manufacturer.',
             ], 404);
+        }else{
+            $LoggingService->addTransactionLog(1, "Manufacturer Credentials Binding", "pass","",$logingReference);
         }
 
         $fabricAuth = new FabricAuthService();
@@ -132,22 +187,19 @@ class ManufacturerOrdersController extends Controller
 
         $login = $fabricAuth->login($manuUsername, $connectedEntity->type, 'Org1', $credentials->pasword);
         if(!$login['success']) {
+            $LoggingService->addTransactionLog(1, "Manufacturer Authentication", "fail",$login['message'],$logingReference);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Fabric login failed',
                 'error' => $login['message'] ?? 'Unknown error'
             ], 500);
+        }else{
+            $LoggingService->addTransactionLog(1, "Manufacturer Authentication", "pass","",$logingReference);
         }
         
         $token = $login['token'];
 
-        if (!$login['success']) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Fabric login failed',
-                'error' => $login['message'] ?? 'Unknown error'
-            ], 500);
-        }
 
         $payload = [
             'username'     => $credentials->username,
@@ -155,9 +207,9 @@ class ManufacturerOrdersController extends Controller
             'drugId'       => $order->drug->drug_id ?? 'UNKNOWN',
             'name'         => $order->drug->name,
             'manufacturer' => $order->manufacturer->name,
-            'batch'        => $order->batch_number ?? '1',
+            'batch'        => $batchID,
             'expiry'       => "2025-03-02",
-            'amount'       => $order->total_amount ?? '0',
+            'amount'       => $amount,
         ];
 
 
@@ -165,46 +217,80 @@ class ManufacturerOrdersController extends Controller
             $response = Http::withToken($token)->post('http://20.193.133.149:3000/api/registerDrug', $payload);
             $responseData = $response->json();
 
+
+            if( $responseData['success'] !== true){
+
+                $responseJson = json_encode($responseData);
+                $LoggingService->addTransactionLog(1, "Tokens Generation", "fail",$responseJson,$logingReference);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Entity created but encountered an error contacting fabric server.',
+                    'error' => $responseJson
+                ], 500);
+            }
+
+            $status = "pending";
+            if($order->total_amount <= $corp_transactions){
+                $status = "created";
+            }
             ManufacturerOrder::where(['manufacturer_id'=>$connectedEntity->id, 'order_number'=>$orderid])->update([
-                'status' => 'created'
+                'status' => $status
             ]);
-            ImporterOrder::where(['manufacturer_id'=>$connectedEntity->id, 'id'=>$orderid])->update([
+            ImporterOrder::where(['manufacturer_id'=>$connectedEntity->id, 'order_number'=>$orderid])->update([
                 'status' => 'approved'
             ]);
+            $LoggingService->addTransactionLog(1, "Manufacturer Order Creation", "pass","",$logingReference);
+            $LoggingService->addTransactionLog(1, "Importer Order Updating", "pass","",$logingReference);
 
+            
             corp_transactions::create([
                 'drugid' => $payload["drugId"],
                 'fromEntID' => $connectedEntity->entID,
                 'toEntID' => $connectedEntity->entID,
-                'amount' => $payload['amount'],
+                'amount' => $amount,
                 'status' => "created",
-                "referenceNo" => $responseData['assetID'] ?? null
+                "referenceNo" => $orderid ?? null,
+                "assetsID" => $responseData['result']['assetID'] ?? null,
+                "batchID"=>$batchID
             ]);
+            $LoggingService->addTransactionLog(1, "Transaction Logging", "pass","",$logingReference);
 
-            $wallet = local_drug_wallet::where('drugid', $payload["drugId"])
+
+            $wallet = local_drug_wallet::where(['drugid' => $payload["drugId"], "batchID"=>$batchID])
                 ->where('entID', $entID)
                 ->first();
+            $LoggingService->addTransactionLog(1, "Added to Drug Wallet", "pass","",$logingReference);
+
 
             if ($wallet) {
-                $wallet->avail_amount += $payload['amount'];
+                $wallet->avail_amount += $amount;
                 $wallet->save();
+                $LoggingService->addTransactionLog(1, "Added Tokens to the manufacturer wallet", "pass","",$logingReference);
+
             } else {
                 local_drug_wallet::create([
                     'drugid' => $payload["drugId"],
                     'entID' => $entID,
-                    "assetsID"=>null,
-                    'avail_amount' => $payload['amount']
+                    "assetsID"=> $responseData['result']['assetID'] ?? null,
+                    'batchID'=>$batchID,
+                    'avail_amount' => $amount
                 ]);
+                $LoggingService->addTransactionLog(1, "Creating Manufacturer wallet and adding tokens", "pass","",$logingReference);
+
             }
 
 
             return response()->json([
                 'success' => true,
                 'message' => 'Entity created successfully.',
-                'data' => $responseData
+                'data' => $responseData,
+                "payload"=>$payload
             ], 201);
             
         } catch (\Exception $e) {
+            $LoggingService->addTransactionLog(1, "Tokens Generation", "fail",$e->getMessage(),$logingReference);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Entity created but encountered an error contacting fabric server.',

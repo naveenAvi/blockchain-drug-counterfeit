@@ -29,6 +29,10 @@ import ApproveOrder from "./CommonPages/Approvals/ApproveOrder";
 
 import GenarateToken from "./CommonPages/SendDrug/GenarateToken/GenarateToken";
 import ImporterDashboard from "./CommonPages/Dashboard/ImporterDashboard";
+import TransactionsList from "./CommonPages/Approvals/TransactionsList";
+import StatusLogging from "./CommonPages/Transactions/StatusLogging";
+import OrderDetailsPage from "./CommonPages/Transactions/OrderDetailsPage";
+import TransactionHistoryAsset from "./CommonPages/Transactions/TransactionHistoryAsset";
 
 //Accounts
 const Approuter = () => {
@@ -63,6 +67,7 @@ const Approuter = () => {
             <Route path="/order-list-view/:orderId" element={<OrderListView />} />
 
 
+            <Route path="/transaction-list" element={<TransactionsList />} />
             <Route path="/importer-invoice-list" element={<OrderList />} />
             <Route path="/transaction-history" element={<TransactionHistory />} />
             <Route path="/order-history" element={<OrderHistory />} />
@@ -76,6 +81,11 @@ const Approuter = () => {
 
           
 
+            <Route path="/transaction-status/:referenceNumber" element={<StatusLogging />} />
+            <Route path="/transaction-history/:referenceNumber" element={<TransactionHistoryAsset />} />
+
+            
+            <Route path="/order-details/:orderId" element={<OrderDetailsPage />} />
       
             <Route path="/transfer-tokens" element={<CommonTransfer />} />
             <Route path="/manufacture-dashboard" element={<ManufactureDashboard />} />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { confirmAndCreateTokens, getManuorderListByID } from '../../Shared/Services/manufacturerServices';
 import AlertService from '../../notificationService';
 
@@ -9,6 +9,7 @@ const OrderListView = () => {
   const { orderId } = useParams();
   const [order, setOrder] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getManuorderListByID({ orderid: orderId }).then(response => {
@@ -20,11 +21,13 @@ const OrderListView = () => {
     setIsLoading(true);
     confirmAndCreateTokens(order)
       .then(response => {
-        console.log("Tokens created successfully", response.data);
-        AlertService.success('Created and assigned to the manufacturer');
+        navigate(`/transaction-status/${order.order_number}`)
+        // AlertService.success('Created and assigned to the manufacturer');
       })
       .catch(error => {
-        AlertService.error('Failed to create tokens: ' + error.message);
+        navigate(`/transaction-status/${order.order_number}`)
+
+        // AlertService.error('Failed to create tokens: ' + error.message);
       })
       .finally(() => {
         setIsLoading(false);
