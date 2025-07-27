@@ -186,7 +186,8 @@ class ManufacturerOrdersController extends Controller
 
 
         $login = $fabricAuth->login($manuUsername, $connectedEntity->type, 'Org1', $credentials->pasword);
-        if(!$login['success']) {
+        
+        if (!is_array($login) || !isset($login['success']) || !$login['success']) {
             $LoggingService->addTransactionLog(1, "Manufacturer Authentication", "fail",$login['message'],$logingReference);
 
             return response()->json([
@@ -217,8 +218,8 @@ class ManufacturerOrdersController extends Controller
             $response = Http::withToken($token)->post('http://20.193.133.149:3000/api/registerDrug', $payload);
             $responseData = $response->json();
 
+            if (!is_array($responseData) || !isset($responseData['success']) || !$responseData['success']) {
 
-            if( $responseData['success'] !== true){
 
                 $responseJson = json_encode($responseData);
                 $LoggingService->addTransactionLog(1, "Tokens Generation", "fail",$responseJson,$logingReference);

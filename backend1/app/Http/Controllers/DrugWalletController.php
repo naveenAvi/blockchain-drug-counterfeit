@@ -135,14 +135,14 @@ class DrugWalletController extends Controller
             ]);
             $response = $response->json();
             $transferMessage = $response['result']['message'] ?? null;
-            $transferMessage = $response['error'] ?? null;
+            $transferMessageErrr = $response['error'] ?? null;
             $transferredAssetID = $response['result']['transferredAssetID'] ?? null;
 
             if (!($transferMessage === "Transfer successful from single block" ||$transferMessage === "Transfer successful by merging multiple blocks" )){
                 return response()->json([
                     'success' => false,
                     'message' => ' Thrown error from the fabrics',
-                    'error' => $transferMessage ?? $transferMessage,
+                    'error' => $transferMessage ?? $transferMessageErrr,
                     "response"=>$response
                 ], 500);
             }
