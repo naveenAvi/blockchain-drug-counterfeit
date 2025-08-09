@@ -17,3 +17,7 @@ export const userLoginAction2 = async (credentials) => {
 export async function myEntity(){
     return axios.post(`${backendAPI}api/user/my-entity`, )
 }
+
+export async function getAdminDashboard(){
+    return axios.post(`${backendAPI}api/admin/getDashboardData`, )
+}

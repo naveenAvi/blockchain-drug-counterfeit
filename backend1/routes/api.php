@@ -38,7 +38,6 @@ Route::delete('/drug/{drug}', [DrugController::class, 'destroy']);
 Route::post('/register', [userController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/login', [UserController::class, 'login']);
-Route::post('/transaction-history', [DrugTransactionController::class, 'index']);
 Route::post('/corp_store', [userController::class, 'corp_store']);
 
 Route::post('/order-history', [ImporterOrdersController::class, 'shows']);
@@ -48,7 +47,9 @@ Route::post('/order-history', [ImporterOrdersController::class, 'shows']);
 
 
 
-
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::post('/admin/getDashboardData', [userController::class, 'getDashboardData']);
+});
 
 
 
@@ -94,6 +95,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/my/getTRansactionHistory', [DrugTransactionController::class, 'getAssetHistory']);
     
+Route::post('/transaction-history', [DrugTransactionController::class, 'index']);
 
 });
     Route::post('/logging/transaction-status', [LoggingCOntroller::class, 'getTransactionLogs']);

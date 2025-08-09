@@ -34,15 +34,15 @@ const Login = () => {
       setUser(user);
 
       if (user.role === 'manufacturer') {
-        navigate('/manufacture-dashboard');
+        window.location.href = '/manufacture-dashboard';
       } else if (user.role === 'pharmacy') {
-        navigate('/pharmacy/dashboard');
+        window.location.href = '/pharmacy/dashboard';
       } else if (user.role === 'distributor') {
-        navigate('/distributor/dashboard');
+        window.location.href = '/distributor/dashboard';
       } else if (user.role === 'importer') {
-        navigate('/importer-dashboard');
+        window.location.href = '/importer-dashboard';
       } else {
-        navigate('/user/dashboard');
+        window.location.href = '/admin-dashboard';
       }
     } catch (err) {
       console.error(err);

@@ -44,4 +44,17 @@ class FabricAuthService
             ];
         }
     }
+
+    public function resolveRole($roleCode)
+    {
+        $roleReverseMap = [
+            'manufacturer' => 'manu',
+            'distributor' => 'dist',
+            'pharmacy' => 'pharm',
+            'regular' => 'reg',
+            'importer' => 'imp',
+        ];
+
+        return $roleReverseMap[$roleCode] ?? $roleCode;
+    }
 }

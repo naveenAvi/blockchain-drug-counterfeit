@@ -98,55 +98,61 @@ const EntityUserCreation = () => {
           </div>
 
           <div className="card">
-            <div className="card-body d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-              <div className="d-flex align-items-center flex-sm-nowrap flex-wrap row-gap-3">
-                <div className="me-3 doctor-profile-img">
-                  {entity.logo_path ? (
-                    <img
-                      className="rounded"
-                      alt="Logo"
-                      style={{ width: 100, height: 100, objectFit: 'contain' }}
-                      src={`/${entity.logo_path}`}
-                    />
-                  ) : (
-                    <div className="rounded bg-light d-flex align-items-center justify-content-center" style={{ width: 100, height: 100 }}>
-                      No Logo
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex-fill">
-                  <div className="d-flex align-items-center mb-1">
-                    <h4 className="mb-0 fw-semibold me-2">{entity.name}</h4>
-                    <Tag color="blue">{entity.type}</Tag>
-                  </div>
-
-                  <span className="d-block fs-13">
-                    <i className="fas fa-globe me-1"></i>
-                    {entity.country}
-                  </span>
-
-                  <span className="d-block fs-13">
-                    <i className="fas fa-phone-alt me-1"></i>
-                    {entity.contact}
-                  </span>
-
-                  <span className="d-block fs-13">
-                    <i className="fas fa-envelope me-1"></i>
-                    {entity.email}
-                  </span>
-
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-2">License Info</p>
-                <h6 className="fs-14 mb-1">{entity.license_type || 'N/A'}</h6>
-                <p className="fs-14">{entity.license_number || 'N/A'}</p>
-                <p className="text-muted mb-0">Established: {entity.established_year}</p>
-              </div>
+  <div className="card-body">
+    <div className="row align-items-center">
+      
+      {/* Logo + Entity Info */}
+      <div className="col-md-8 d-flex align-items-center gap-4 flex-wrap">
+        <div style={{ width: 100, height: 100 }} className="flex-shrink-0">
+          {entity.logo_path ? (
+            <img
+              src={`/${entity.logo_path}`}
+              alt="Logo"
+              className="rounded border"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          ) : (
+            <div className="rounded bg-light d-flex align-items-center justify-content-center border" style={{ width: '100%', height: '100%' }}>
+              No Logo
             </div>
+          )}
+        </div>
+
+        <div className="flex-grow-1">
+          <div className="d-flex align-items-center mb-2 flex-wrap gap-2">
+            <h4 className="mb-0 fw-semibold">{entity.name}</h4>
+            <Tag color="blue">{entity.type}</Tag>
           </div>
+
+          <div className="text-muted fs-14">
+            <p className="mb-1">
+              <i className="fas fa-globe me-2"></i>
+              {entity.country}
+            </p>
+            <p className="mb-1">
+              <i className="fas fa-phone-alt me-2"></i>
+              {entity.contact}
+            </p>
+            <p className="mb-0">
+              <i className="fas fa-envelope me-2"></i>
+              {entity.email}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* License Info */}
+      <div className="col-md-4 text-md-end text-start mt-4 mt-md-0">
+        <p className="mb-2 fw-semibold">License Info</p>
+        <h6 className="fs-14 mb-1">{entity.license_type || 'N/A'}</h6>
+        <p className="fs-14 mb-1">{entity.license_number || 'N/A'}</p>
+        <p className="text-muted mb-0">Established: {entity.established_year || 'N/A'}</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
           <form onSubmit={handleSubmit}>
             <div className="card">

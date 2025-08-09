@@ -33,6 +33,7 @@ import TransactionsList from "./CommonPages/Approvals/TransactionsList";
 import StatusLogging from "./CommonPages/Transactions/StatusLogging";
 import OrderDetailsPage from "./CommonPages/Transactions/OrderDetailsPage";
 import TransactionHistoryAsset from "./CommonPages/Transactions/TransactionHistoryAsset";
+import AdminDashboard from "./CommonPages/Dashboard/AdminDashboard";
 
 //Accounts
 const Approuter = () => {
@@ -91,6 +92,9 @@ const Approuter = () => {
             <Route path="/manufacture-dashboard" element={<ManufactureDashboard />} />
             <Route path="/importer-dashboard" element={<ImporterDashboard />} />
             <Route path="/distributor-dashboard" element={<DistributorDashboard />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
+            
 
             
 

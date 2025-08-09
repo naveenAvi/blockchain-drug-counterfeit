@@ -274,7 +274,7 @@ const ManufactureDashboard = () => {
 
 
 
-                                <div className="row g-3 align-items-center mb-3">
+                                {/* <div className="row g-3 align-items-center mb-3">
                                     <div className="col-md-4">
                                         <Search
                                             placeholder="Search orders..."
@@ -332,7 +332,7 @@ const ManufactureDashboard = () => {
                                             overflow: 'hidden'
                                         }}
                                     />
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

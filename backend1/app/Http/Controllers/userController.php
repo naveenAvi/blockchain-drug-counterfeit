@@ -7,12 +7,65 @@ use App\Models\User;
 use App\Mail\CorpUserWelcomeMail;
 use App\Models\ConnectedEntity;
 use Illuminate\Http\Request;
+use App\Models\ImporterOrder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Str;
 
 class userController extends Controller
 {
+    public function getDashboardData()
+    {
+        
+
+        $allOrdersCount = ImporterOrder::get()->count();
+        $allOrdersSum = ImporterOrder::get()->sum('total_amount');
+
+        $pendingCount = ImporterOrder::where([
+            'status' => 'pending'
+        ])->count();
+        $pendingSum = ImporterOrder::where([
+            'status' => 'pending'
+        ])->sum('total_amount');
+
+        $createdCount = ImporterOrder::where([
+            'status' => 'created'
+        ])->count();
+        $createdSum = ImporterOrder::where([
+            'status' => 'created'
+        ])->sum('total_amount');
+
+        $rejectedCount = ImporterOrder::where([
+            'status' => 'rejected'
+        ])->count();
+        $rejectedSum = ImporterOrder::where([
+            'status' => 'rejected'
+        ])->sum('total_amount');
+
+
+
+
+        return response()->json([
+            'success' => true,
+            'allOrders' => [
+                'count' => $allOrdersCount,
+                'sum' => $allOrdersSum,
+            ],
+            'pending' => [
+                'count' => $pendingCount,
+                'sum' => $pendingSum,
+            ],
+            'created' => [
+                'count' => $createdCount,
+                'sum' => $createdSum,
+            ],
+            'rejected' => [
+                'count' => $rejectedCount,
+                'sum' => $rejectedSum,
+            ],
+        ]);
+
+    }
     public function corp_store(Request $request)
     {
         $validated = $request->validate([

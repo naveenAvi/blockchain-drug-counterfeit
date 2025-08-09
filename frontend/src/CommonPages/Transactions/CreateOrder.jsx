@@ -5,6 +5,9 @@ import { getDrugs } from '../../Shared/Services/DrugService';
 import { getManufacturers } from '../../Shared/Services/manufacturerServices';
 import CreateOrderInvoice from '../../components/invoices/createOrderInvoice';
 import { myEntity } from '../../Shared/Services/userServices';
+import Swal from 'sweetalert2';
+import { createOrder } from '../../Shared/Services/ImporterServices';
+import AlertService from '../../notificationService';
 
 const request = {
   invoiceNumber: 'INV-2025-001',
@@ -66,7 +69,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, searchKey = '
 
   return (
     <div className="searchable-select position-relative">
-      <div 
+      <div
         className={`form-control d-flex justify-content-between align-items-center ${error ? 'is-invalid' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
         style={{ cursor: 'pointer', minHeight: '38px' }}
@@ -76,7 +79,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, searchKey = '
         </span>
         <i className={`fas fa-chevron-${isOpen ? 'up' : 'down'}`}></i>
       </div>
-      
+
       {isOpen && (
         <div className="dropdown-menu show w-100 shadow-lg border-0 mt-1" style={{ zIndex: 1050 }}>
           <div className="p-2 border-bottom">
@@ -110,7 +113,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, searchKey = '
           </div>
         </div>
       )}
-      
+
       {error && <div className="invalid-feedback d-block">{error}</div>}
     </div>
   );
@@ -189,7 +192,7 @@ const CreateOrder = () => {
     if (!manufacturerId) newErrors.manufacturer = "Please select manufacturer";
     if (!invoiceNumber.trim()) newErrors.invoice = "Invoice number is required";
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) newErrors.amount = "Please enter a valid amount";
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -197,7 +200,7 @@ const CreateOrder = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    
+
     setLoading(true);
     try {
       const order = {
@@ -213,7 +216,59 @@ const CreateOrder = () => {
         fromParty
       };
 
-       setInvoiceShow({ display: true, order });
+      const result = await Swal.fire({
+        title: 'Confirm Order Creation',
+        html: `
+          <div class="text-start">
+            <p><strong>Drug:</strong> ${order.drug?.name}</p>
+            <p><strong>Dosage:</strong> ${order.dosage}</p>
+            <p><strong>Manufacturer:</strong> ${order.manufacturer?.name}</p>
+            <p><strong>Invoice:</strong> ${order.invoiceNumber}</p>
+            <p><strong>Amount:</strong> ${order.amount}</p>
+          </div>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Create Order',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true,
+        customClass: {
+          confirmButton: 'btn btn-success me-2',
+          cancelButton: 'btn btn-secondary'
+        },
+        buttonsStyling: false
+      });
+
+      if (result.isConfirmed) {
+        setLoading(true);
+        try {
+          const payload = {
+            invoice_number: order.invoiceNumber,
+            reference_document: null,
+            manufacturer_id: parseInt(order.order.manufacturerId),
+            importer_id: order.order.fromParty?.id,
+            order_date: new Date().toISOString().split('T')[0],
+            status: "pending",
+            total_amount: parseInt(order.order.amount),
+            notes: "",
+            drugid: order.order.drug.id,
+          };
+
+          try {
+            await createOrder(payload);
+            AlertService.success("created the Order")
+          } catch (error) {
+            AlertService.error("failed to create the Order")
+          } 
+        } catch (error) {
+          console.error('Error creating order:', error);
+          Swal.fire('Error', 'Something went wrong. Try again.', 'error');
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      // setInvoiceShow({ display: true, order });
     } catch (error) {
       console.error('Error creating order:', error);
     } finally {
@@ -254,8 +309,8 @@ const CreateOrder = () => {
                 <p className="text-muted mb-0">Create a new pharmaceutical order request</p>
               </div>
               <div className="col-auto">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-outline-success btn-sm"
                   onClick={resetForm}
                 >
@@ -325,9 +380,9 @@ const CreateOrder = () => {
                           <i className="fas fa-prescription-bottle me-1 text-success"></i>
                           Dosage <span className="text-danger">*</span>
                         </label>
-                        <select 
+                        <select
                           className={`form-control ${errors.dosage ? 'is-invalid' : ''}`}
-                          value={dosage} 
+                          value={dosage}
                           onChange={(e) => setDosage(e.target.value)}
                           disabled={!selectedDrug}
                         >
@@ -361,10 +416,10 @@ const CreateOrder = () => {
                           <i className="fas fa-file-invoice me-1 text-success"></i>
                           Invoice Number <span className="text-danger">*</span>
                         </label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className={`form-control ${errors.invoice ? 'is-invalid' : ''}`}
-                          value={invoiceNumber} 
+                          value={invoiceNumber}
                           onChange={(e) => setInvoiceNumber(e.target.value)}
                           placeholder="Enter invoice number"
                         />
@@ -378,10 +433,10 @@ const CreateOrder = () => {
                           Amount <span className="text-danger">*</span>
                         </label>
                         <div className="input-group">
-                          <input 
-                            type="number" 
+                          <input
+                            type="number"
                             className={`form-control ${errors.amount ? 'is-invalid' : ''}`}
-                            value={amount} 
+                            value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             placeholder="Enter amount"
                             min="0"
@@ -401,8 +456,8 @@ const CreateOrder = () => {
                           Reference Document (Invoice/Permit)
                         </label>
                         <div className="input-group">
-                          <input 
-                            type="file" 
+                          <input
+                            type="file"
                             className={`form-control ${errors.reference ? 'is-invalid' : ''}`}
                             accept=".pdf,.jpg,.jpeg,.png"
                             onChange={(e) => setReferenceDoc(e.target.files[0])}
@@ -515,16 +570,16 @@ const CreateOrder = () => {
                     </small>
                   </div>
                   <div className="btn-group">
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="btn btn-outline-secondary"
                       onClick={resetForm}
                     >
                       <i className="fas fa-times me-1"></i>
                       Cancel
                     </button>
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="btn btn-success"
                       disabled={loading}
                     >
@@ -548,10 +603,10 @@ const CreateOrder = () => {
         </div>
       </div>
 
-      <CreateOrderInvoice 
-        request={request} 
-        order={invoiceShow} 
-        onClose={setInvoiceShow} 
+      <CreateOrderInvoice
+        request={request}
+        order={invoiceShow}
+        onClose={setInvoiceShow}
       />
 
       <style jsx>{`

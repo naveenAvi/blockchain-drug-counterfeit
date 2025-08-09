@@ -24,7 +24,13 @@ const sidebarMenu = [
         name: "dashboard",
         path: "/importer-dashboard",
         allowedRoles: ["importer"]
+      },
+      {
+        name: "dashboard",
+        path: "/admin-dashboard",
+        allowedRoles: ["admin"]
       }
+
     ]
   },
   {
@@ -115,12 +121,12 @@ const sidebarMenu = [
         path: "/transfer-tokens",
         allowedRoles: "all"
       },
-{
+      {
         name: "transactions ",
         path: "/transaction-list",
         allowedRoles: "all"
       },
-      
+
 
     ]
   },

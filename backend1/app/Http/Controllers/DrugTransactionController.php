@@ -17,7 +17,19 @@ class DrugTransactionController extends Controller
 {
     public function index()
     {
-        return response()->json(corp_transactions::get()->load('to', "from", "drug"), 200);
+        $user = Auth::user();
+
+        $entID = $user->entID ?? null;
+        if (!$entID) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Authenticated user does not have an entID.'
+            ], 403);
+        }
+        $connectedEntity = ConnectedEntity::where([
+            'entID' => $entID
+        ])->firstOrFail();
+        return response()->json(corp_transactions::orWhere(["fromEntID"=>$entID])->orWhere(["toEntID"=>$entID])->get()->load('to', "from", "drug"), 200);
     }
 
     public function getTransactionsByReference($referenceNo)
@@ -97,12 +109,13 @@ class DrugTransactionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Fabric login failed',
-                'error' => $login['message'] ?? 'Unknown error'
+                'error' => $login['message'] ?? 'Unknown error',
+                "userid"=>$manuUsername
             ], 500);
         }
         try {
             $response = Http::withToken($token)->post('http://20.193.133.149:3000/api/getAssetHistorysimple', [
-                'username' => $connectedEntity->name . ".manu", 
+                'username' => $connectedEntity->name . "." . $fabricAuth->resolveRole($connectedEntity->type), 
                 'org' => 'Org1',
                 "assetID"=>$referenceNumber
             ]);
